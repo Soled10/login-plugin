@@ -114,17 +114,7 @@ public class PlayerJoinListener implements Listener {
             
             // Se o UUID não coincidir com o da conta original, kicka o jogador
             if (originalUUID != null && !originalUUID.equals(player.getUniqueId())) {
-                player.kickPlayer("§c❌ Este nick pertence a uma conta PREMIUM!\n" +
-                                "§eVocê não pode usar este nome.\n" +
-                                "§a🔓 Use outro nickname para jogar no servidor.");
-                return true; // Jogador foi kickado
-            }
-        }
-        
-        // Verifica se o nome pertence a uma conta original (verificação em tempo real)
-        if (authUtils.isNameUsedByOriginal(playerName)) {
-            // Se não for a conta original, kicka o jogador
-            if (!authUtils.isOriginalPlayer(player)) {
+                plugin.getLogger().info("❌ Conta pirata tentando usar nome de conta original: " + playerName);
                 player.kickPlayer("§c❌ Este nick pertence a uma conta PREMIUM!\n" +
                                 "§eVocê não pode usar este nome.\n" +
                                 "§a🔓 Use outro nickname para jogar no servidor.");

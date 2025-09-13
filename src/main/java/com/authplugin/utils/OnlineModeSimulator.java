@@ -39,20 +39,13 @@ public class OnlineModeSimulator {
                 // Passo 2: Converte UUID da API para o formato correto
                 UUID officialUUID = UUID.fromString(apiUUID);
                 
-                // Passo 3: Verifica se já existe uma conta original registrada com este nome
-                if (isOriginalNameAlreadyRegistered(playerName)) {
-                    plugin.getLogger().info("❌ Nome '" + playerName + "' já está registrado como conta original - BLOQUEANDO");
-                    plugin.getLogger().info("UUID atual: " + currentUUID);
-                    plugin.getLogger().info("UUID oficial: " + officialUUID);
-                    plugin.getLogger().info("Conta pirata tentando usar nome de conta original!");
-                    return new OnlineModeResult(false, null, "Nome já registrado como conta original");
-                }
-                
-                // Passo 4: Se chegou até aqui, é a primeira vez que este nome de conta original está sendo usado
-                plugin.getLogger().info("✅ Nome '" + playerName + "' não está registrado - primeira vez usando conta original");
-                plugin.getLogger().info("UUID atual: " + currentUUID);
-                plugin.getLogger().info("UUID oficial: " + officialUUID);
-                plugin.getLogger().info("Registrando como conta original válida");
+                // Passo 3: Simula online-mode=true para este usuário específico
+                // Se a conta existe na API Mojang, é considerada premium
+                plugin.getLogger().info("✅ Simulando online-mode=true para usuário: " + playerName);
+                plugin.getLogger().info("✅ Conta existe na API Mojang - USUÁRIO É PREMIUM");
+                plugin.getLogger().info("UUID atual (offline): " + currentUUID);
+                plugin.getLogger().info("UUID oficial (API): " + officialUUID);
+                plugin.getLogger().info("Associando UUID oficial ao jogador: " + playerName);
                 
                 // Passo 4: Se chegou até aqui, é uma conta original válida
                 plugin.getLogger().info("✅ Conta '" + playerName + "' passou na verificação online-mode");
@@ -69,18 +62,6 @@ public class OnlineModeSimulator {
         });
     }
     
-    /**
-     * Verifica se um nome já está registrado como conta original
-     */
-    private boolean isOriginalNameAlreadyRegistered(String playerName) {
-        try {
-            // Verifica no banco de dados se o nome já está registrado como conta original
-            return plugin.getDatabaseManager().isOriginalNameProtected(playerName);
-        } catch (Exception e) {
-            plugin.getLogger().warning("Erro ao verificar nome registrado: " + e.getMessage());
-            return false;
-        }
-    }
     
     /**
      * Obtém o UUID de um jogador via API da Mojang
