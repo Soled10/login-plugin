@@ -15,13 +15,13 @@ public class AuthUtils {
     private AuthPlugin plugin;
     private DatabaseManager databaseManager;
     private MojangAPI mojangAPI;
-    private OnlineModeChecker onlineModeChecker;
+    private UserOnlineModeChecker userOnlineModeChecker;
     
     public AuthUtils(AuthPlugin plugin) {
         this.plugin = plugin;
         this.databaseManager = plugin.getDatabaseManager();
         this.mojangAPI = plugin.getMojangAPI();
-        this.onlineModeChecker = new OnlineModeChecker(plugin);
+        this.userOnlineModeChecker = new UserOnlineModeChecker(plugin);
     }
     
     /**
@@ -69,7 +69,7 @@ public class AuthUtils {
     
     /**
      * Verifica se um jogador é de conta original
-     * Método: Verifica via API da Mojang se a conta existe (simula online-mode=true)
+     * Método: Simula online-mode=true para o usuário específico
      */
     public boolean isOriginalPlayer(Player player) {
         plugin.getLogger().info("🔍 Verificando conta original para: " + player.getName() + " (" + player.getUniqueId() + ")");
@@ -83,19 +83,19 @@ public class AuthUtils {
             return true;
         }
         
-        // Se estiver em offline-mode, verifica via API da Mojang
+        // Se estiver em offline-mode, simula online-mode=true para este usuário
         try {
-            boolean isPremium = onlineModeChecker.isPremiumAccount(player.getName()).get();
+            boolean passedOnlineModeCheck = userOnlineModeChecker.verifyUserOnlineMode(player.getName(), player.getUniqueId()).get();
             
-            if (isPremium) {
-                plugin.getLogger().info("✅ Conta PREMIUM detectada via API Mojang: " + player.getName());
+            if (passedOnlineModeCheck) {
+                plugin.getLogger().info("✅ Usuário passou na verificação online-mode - PREMIUM: " + player.getName());
                 return true;
             } else {
-                plugin.getLogger().info("❌ Conta PIRATA detectada (não encontrada na API): " + player.getName());
+                plugin.getLogger().info("❌ Usuário falhou na verificação online-mode - PIRATA: " + player.getName());
                 return false;
             }
         } catch (Exception e) {
-            plugin.getLogger().warning("Erro ao verificar conta premium: " + e.getMessage());
+            plugin.getLogger().warning("Erro na verificação online-mode: " + e.getMessage());
             // Em caso de erro, considera como pirata
             plugin.getLogger().info("❌ Erro na verificação - considerando como PIRATA: " + player.getName());
             return false;
