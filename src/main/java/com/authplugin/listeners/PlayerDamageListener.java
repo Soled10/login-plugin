@@ -37,9 +37,10 @@ public class PlayerDamageListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         
-        // Se o jogador não estiver autenticado, cancela a morte
+        // Se o jogador não estiver autenticado, não permite a morte
         if (!plugin.isPlayerAuthenticated(player.getUniqueId())) {
-            event.setCancelled(true);
+            // PlayerDeathEvent não tem setCancelled, então vamos prevenir o dano antes
+            // Isso já é feito no onPlayerDamage
         }
     }
 }
