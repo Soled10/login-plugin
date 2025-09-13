@@ -29,6 +29,11 @@ if [ $? -eq 0 ]; then
     echo "2. Configure online-mode=false no server.properties"
     echo "3. Reinicie o servidor"
     echo ""
+    echo "IMPORTANTE: Se você tem uma conta original e está sendo pedido para registrar:"
+    echo "- Verifique os logs do servidor para ver as mensagens de debug"
+    echo "- O plugin agora tem logs detalhados para diagnosticar o problema"
+    echo "- Se o servidor estiver em online-mode=true, contas originais são detectadas automaticamente"
+    echo ""
     echo "=== Build Concluído ==="
 else
     echo ""

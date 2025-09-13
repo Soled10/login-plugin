@@ -69,7 +69,52 @@ public class AuthUtils {
      * Verifica se um jogador é de conta original
      */
     public boolean isOriginalPlayer(Player player) {
-        return mojangAPI.isOriginalAccount(player.getName());
+        plugin.getLogger().info("Iniciando verificação de conta original para: " + player.getName() + " (" + player.getUniqueId() + ")");
+        
+        // Verifica se o servidor está em online-mode
+        boolean isOnlineMode = plugin.getServer().getOnlineMode();
+        plugin.getLogger().info("Servidor em online-mode: " + isOnlineMode);
+        
+        // Se estiver em online-mode, todos os jogadores são originais
+        if (isOnlineMode) {
+            plugin.getLogger().info("Servidor em online-mode - conta considerada original: " + player.getName());
+            return true;
+        }
+        
+        // Primeiro tenta verificar pelo nome
+        boolean isOriginalByName = mojangAPI.isOriginalAccount(player.getName());
+        
+        if (isOriginalByName) {
+            plugin.getLogger().info("Conta original detectada pelo nome: " + player.getName());
+            return true;
+        }
+        
+        // Se não funcionou pelo nome, tenta pelo UUID
+        boolean isOriginalByUUID = mojangAPI.isOriginalUUID(player.getUniqueId());
+        
+        if (isOriginalByUUID) {
+            plugin.getLogger().info("Conta original detectada pelo UUID: " + player.getUniqueId());
+            return true;
+        }
+        
+        // Verifica se o UUID parece ser de uma conta original (formato offline vs online)
+        boolean isOfflineUUID = isOfflineModeUUID(player.getUniqueId());
+        if (isOfflineUUID) {
+            plugin.getLogger().info("UUID parece ser de modo offline - conta considerada pirata: " + player.getName());
+            return false;
+        }
+        
+        plugin.getLogger().info("Conta não é original: " + player.getName() + " (" + player.getUniqueId() + ")");
+        return false;
+    }
+    
+    /**
+     * Verifica se um UUID é de modo offline (pirata)
+     */
+    private boolean isOfflineModeUUID(UUID uuid) {
+        // UUIDs de modo offline têm um padrão específico
+        // Eles são gerados baseados no nome do jogador
+        return uuid.version() == 3; // UUID v3 indica modo offline
     }
     
     /**

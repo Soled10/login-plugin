@@ -22,13 +22,17 @@ public class MojangAPI {
      */
     public boolean isOriginalAccount(String playerName) {
         try {
+            Bukkit.getLogger().info("Verificando conta original para: " + playerName);
+            
             URL url = new URL(MOJANG_API_URL + playerName);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
+            connection.setRequestProperty("User-Agent", "AuthPlugin/1.0.0");
             
             int responseCode = connection.getResponseCode();
+            Bukkit.getLogger().info("Resposta da API Mojang: " + responseCode + " para " + playerName);
             
             if (responseCode == 200) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -40,13 +44,28 @@ public class MojangAPI {
                 }
                 reader.close();
                 
-                JsonObject jsonObject = JsonParser.parseString(response.toString()).getAsJsonObject();
-                return jsonObject.has("id") && jsonObject.has("name");
+                String jsonResponse = response.toString();
+                Bukkit.getLogger().info("Resposta JSON: " + jsonResponse);
+                
+                if (!jsonResponse.trim().isEmpty()) {
+                    JsonObject jsonObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
+                    boolean hasId = jsonObject.has("id");
+                    boolean hasName = jsonObject.has("name");
+                    boolean isOriginal = hasId && hasName;
+                    
+                    Bukkit.getLogger().info("Conta original detectada: " + isOriginal + " (hasId: " + hasId + ", hasName: " + hasName + ")");
+                    return isOriginal;
+                }
+            } else if (responseCode == 204) {
+                // 204 No Content significa que a conta não existe
+                Bukkit.getLogger().info("Conta não encontrada (204): " + playerName);
+                return false;
             }
             
             return false;
         } catch (Exception e) {
-            Bukkit.getLogger().warning("Erro ao verificar conta original: " + e.getMessage());
+            Bukkit.getLogger().warning("Erro ao verificar conta original para " + playerName + ": " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -111,16 +130,46 @@ public class MojangAPI {
      */
     public boolean isOriginalUUID(UUID uuid) {
         try {
+            Bukkit.getLogger().info("Verificando UUID original: " + uuid);
+            
             URL url = new URL(MOJANG_SESSION_URL + uuid.toString().replace("-", ""));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
+            connection.setRequestProperty("User-Agent", "AuthPlugin/1.0.0");
             
             int responseCode = connection.getResponseCode();
-            return responseCode == 200;
+            Bukkit.getLogger().info("Resposta da API Session para UUID " + uuid + ": " + responseCode);
+            
+            if (responseCode == 200) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+                
+                String jsonResponse = response.toString();
+                Bukkit.getLogger().info("Resposta JSON da Session API: " + jsonResponse);
+                
+                if (!jsonResponse.trim().isEmpty()) {
+                    JsonObject jsonObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
+                    boolean hasId = jsonObject.has("id");
+                    boolean hasName = jsonObject.has("name");
+                    boolean isOriginal = hasId && hasName;
+                    
+                    Bukkit.getLogger().info("UUID original detectado: " + isOriginal + " (hasId: " + hasId + ", hasName: " + hasName + ")");
+                    return isOriginal;
+                }
+            }
+            
+            return false;
         } catch (Exception e) {
-            Bukkit.getLogger().warning("Erro ao verificar UUID original: " + e.getMessage());
+            Bukkit.getLogger().warning("Erro ao verificar UUID original " + uuid + ": " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
