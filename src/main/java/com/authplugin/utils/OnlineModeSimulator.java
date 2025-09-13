@@ -39,22 +39,20 @@ public class OnlineModeSimulator {
                 // Passo 2: Converte UUID da API para o formato correto
                 UUID officialUUID = UUID.fromString(apiUUID);
                 
-                // Passo 3: Verifica se é uma conta pirata usando nome de conta original
-                if (isOfflineModeUUID(currentUUID)) {
-                    plugin.getLogger().info("⚠️ UUID do jogador é offline-mode: " + currentUUID);
-                    plugin.getLogger().info("⚠️ UUID oficial da API: " + officialUUID);
-                    plugin.getLogger().info("⚠️ Jogador está usando nome de conta original com UUID offline");
-                    
-                    // Verifica se já existe uma conta original registrada com este nome
-                    if (isOriginalNameAlreadyRegistered(playerName)) {
-                        plugin.getLogger().info("❌ Nome '" + playerName + "' já está registrado como conta original - BLOQUEANDO");
-                        return new OnlineModeResult(false, null, "Nome já registrado como conta original");
-                    }
-                    
-                    // Se não está registrado, permite mas marca como conta pirata
-                    plugin.getLogger().info("✅ Nome '" + playerName + "' não está registrado - permitindo como conta pirata");
-                    return new OnlineModeResult(false, null, "Conta pirata com nome não registrado");
+                // Passo 3: Verifica se já existe uma conta original registrada com este nome
+                if (isOriginalNameAlreadyRegistered(playerName)) {
+                    plugin.getLogger().info("❌ Nome '" + playerName + "' já está registrado como conta original - BLOQUEANDO");
+                    plugin.getLogger().info("UUID atual: " + currentUUID);
+                    plugin.getLogger().info("UUID oficial: " + officialUUID);
+                    plugin.getLogger().info("Conta pirata tentando usar nome de conta original!");
+                    return new OnlineModeResult(false, null, "Nome já registrado como conta original");
                 }
+                
+                // Passo 4: Se chegou até aqui, é a primeira vez que este nome de conta original está sendo usado
+                plugin.getLogger().info("✅ Nome '" + playerName + "' não está registrado - primeira vez usando conta original");
+                plugin.getLogger().info("UUID atual: " + currentUUID);
+                plugin.getLogger().info("UUID oficial: " + officialUUID);
+                plugin.getLogger().info("Registrando como conta original válida");
                 
                 // Passo 4: Se chegou até aqui, é uma conta original válida
                 plugin.getLogger().info("✅ Conta '" + playerName + "' passou na verificação online-mode");
@@ -72,21 +70,12 @@ public class OnlineModeSimulator {
     }
     
     /**
-     * Verifica se um UUID é de modo offline (v3)
-     */
-    private boolean isOfflineModeUUID(UUID uuid) {
-        // UUIDs v3 (offline-mode) têm versão 3
-        // UUIDs v4 (online-mode) têm versão 4
-        return uuid.version() == 3;
-    }
-    
-    /**
      * Verifica se um nome já está registrado como conta original
      */
     private boolean isOriginalNameAlreadyRegistered(String playerName) {
         try {
-            // Verifica no banco de dados se o nome já está registrado
-            return plugin.getDatabaseManager().isOriginalNameRegistered(playerName);
+            // Verifica no banco de dados se o nome já está registrado como conta original
+            return plugin.getDatabaseManager().isOriginalNameProtected(playerName);
         } catch (Exception e) {
             plugin.getLogger().warning("Erro ao verificar nome registrado: " + e.getMessage());
             return false;
