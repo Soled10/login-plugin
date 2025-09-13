@@ -1,0 +1,57 @@
+# Configuração do AuthPlugin
+
+# Tempo limite para login (em segundos)
+login-timeout: 60
+
+# Localização do spawn de login (opcional)
+# Se não configurado, jogadores permanecerão onde entraram
+login-spawn:
+  enabled: false
+  world: "world"
+  x: 0.0
+  y: 100.0
+  z: 0.0
+  yaw: 0.0
+  pitch: 0.0
+
+# Configurações de segurança
+security:
+  # Verificar contas premium através da Mojang API
+  check-premium: true
+  
+  # Bloquear tentativas de usar nicks de contas premium
+  block-premium-names: true
+  
+  # Tempo de cache para verificações de premium (em milissegundos)
+  premium-cache-duration: 300000
+
+# Mensagens personalizáveis
+messages:
+  prefix: "§e[Auth] "
+  
+  # Mensagens de login
+  login-required: "§cVocê precisa fazer login!"
+  login-success: "§aLogin realizado com sucesso!"
+  login-failed: "§cSenha incorreta!"
+  
+  # Mensagens de registro
+  register-required: "§cVocê precisa se registrar!"
+  register-success: "§aRegistro realizado com sucesso!"
+  register-failed: "§cErro ao registrar!"
+  
+  # Mensagens de timeout
+  timeout-warning: "§cVocê tem {time} segundos para se autenticar!"
+  timeout-kick: "§cTempo limite para fazer login esgotado!"
+  
+  # Mensagens de proteção
+  premium-name-blocked: "§cEste nome pertence a uma conta premium!"
+  already-authenticated: "§eVocê já está logado!"
+  not-authenticated: "§cVocê precisa estar logado para fazer isso!"
+
+# Configurações de database
+database:
+  # Tipo de database (sqlite por enquanto)
+  type: "sqlite"
+  
+  # Nome do arquivo (para SQLite)
+  filename: "players.db"

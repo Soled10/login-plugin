@@ -1,0 +1,26 @@
+name: AuthPlugin
+version: '1.0.0'
+main: com.example.authplugin.AuthPlugin
+api-version: '1.20'
+author: YourName
+description: Plugin de autenticação para servidores offline-mode
+website: https://github.com/yourname/authplugin
+
+commands:
+  login:
+    description: Fazer login no servidor
+    usage: /login <senha>
+    aliases: [l]
+  register:
+    description: Registrar uma nova conta
+    usage: /register <senha> <confirmar-senha>
+    aliases: [reg]
+  changepassword:
+    description: Alterar senha da conta
+    usage: /changepassword <senha-atual> <nova-senha>
+    aliases: [changepass, cp]
+
+permissions:
+  authplugin.admin:
+    description: Permite usar comandos administrativos
+    default: op
