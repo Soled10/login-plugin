@@ -15,11 +15,13 @@ public class AuthUtils {
     private AuthPlugin plugin;
     private DatabaseManager databaseManager;
     private MojangAPI mojangAPI;
+    private OnlineModeChecker onlineModeChecker;
     
     public AuthUtils(AuthPlugin plugin) {
         this.plugin = plugin;
         this.databaseManager = plugin.getDatabaseManager();
         this.mojangAPI = plugin.getMojangAPI();
+        this.onlineModeChecker = new OnlineModeChecker(plugin);
     }
     
     /**
@@ -67,19 +69,35 @@ public class AuthUtils {
     
     /**
      * Verifica se um jogador é de conta original
-     * Método: Verifica se o UUID é de modo online (premium) vs offline (pirata)
+     * Método: Verifica via API da Mojang se a conta existe (simula online-mode=true)
      */
     public boolean isOriginalPlayer(Player player) {
-        plugin.getLogger().info("Verificando conta original para: " + player.getName() + " (" + player.getUniqueId() + ")");
+        plugin.getLogger().info("🔍 Verificando conta original para: " + player.getName() + " (" + player.getUniqueId() + ")");
         
-        // Verifica se o UUID é de modo online (premium) ou offline (pirata)
-        boolean isOnlineUUID = isOnlineModeUUID(player.getUniqueId());
+        // Verifica se o servidor está em online-mode
+        boolean isOnlineMode = plugin.getServer().getOnlineMode();
         
-        if (isOnlineUUID) {
-            plugin.getLogger().info("✅ Conta ORIGINAL detectada (UUID online): " + player.getName());
+        if (isOnlineMode) {
+            // Se estiver em online-mode, todos os jogadores são originais
+            plugin.getLogger().info("✅ Servidor em online-mode - conta considerada PREMIUM: " + player.getName());
             return true;
-        } else {
-            plugin.getLogger().info("❌ Conta PIRATA detectada (UUID offline): " + player.getName());
+        }
+        
+        // Se estiver em offline-mode, verifica via API da Mojang
+        try {
+            boolean isPremium = onlineModeChecker.isPremiumAccount(player.getName()).get();
+            
+            if (isPremium) {
+                plugin.getLogger().info("✅ Conta PREMIUM detectada via API Mojang: " + player.getName());
+                return true;
+            } else {
+                plugin.getLogger().info("❌ Conta PIRATA detectada (não encontrada na API): " + player.getName());
+                return false;
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning("Erro ao verificar conta premium: " + e.getMessage());
+            // Em caso de erro, considera como pirata
+            plugin.getLogger().info("❌ Erro na verificação - considerando como PIRATA: " + player.getName());
             return false;
         }
     }
