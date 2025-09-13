@@ -15,13 +15,13 @@ public class AuthUtils {
     private AuthPlugin plugin;
     private DatabaseManager databaseManager;
     private MojangAPI mojangAPI;
-    private UserOnlineModeChecker userOnlineModeChecker;
+    private OnlineModeSimulator onlineModeSimulator;
     
     public AuthUtils(AuthPlugin plugin) {
         this.plugin = plugin;
         this.databaseManager = plugin.getDatabaseManager();
         this.mojangAPI = plugin.getMojangAPI();
-        this.userOnlineModeChecker = new UserOnlineModeChecker(plugin);
+        this.onlineModeSimulator = new OnlineModeSimulator(plugin);
     }
     
     /**
@@ -69,9 +69,9 @@ public class AuthUtils {
     
     /**
      * Verifica se um jogador é de conta original
-     * Método: Simula online-mode=true para o usuário específico
+     * Método: Simula online-mode=true e associa UUID oficial se passar
      */
-    public boolean isOriginalPlayer(Player player) {
+    public OnlineModeSimulator.OnlineModeResult verifyOriginalPlayer(Player player) {
         plugin.getLogger().info("🔍 Verificando conta original para: " + player.getName() + " (" + player.getUniqueId() + ")");
         
         // Verifica se o servidor está em online-mode
@@ -80,26 +80,35 @@ public class AuthUtils {
         if (isOnlineMode) {
             // Se estiver em online-mode, todos os jogadores são originais
             plugin.getLogger().info("✅ Servidor em online-mode - conta considerada PREMIUM: " + player.getName());
-            return true;
+            return new OnlineModeSimulator.OnlineModeResult(true, player.getUniqueId(), "Servidor em online-mode");
         }
         
         // Se estiver em offline-mode, simula online-mode=true para este usuário
         try {
-            boolean passedOnlineModeCheck = userOnlineModeChecker.verifyUserOnlineMode(player.getName(), player.getUniqueId()).get();
+            OnlineModeSimulator.OnlineModeResult result = onlineModeSimulator.simulateOnlineMode(player.getName(), player.getUniqueId()).get();
             
-            if (passedOnlineModeCheck) {
+            if (result.isSuccess()) {
                 plugin.getLogger().info("✅ Usuário passou na verificação online-mode - PREMIUM: " + player.getName());
-                return true;
+                plugin.getLogger().info("UUID oficial associado: " + result.getOfficialUUID());
             } else {
                 plugin.getLogger().info("❌ Usuário falhou na verificação online-mode - PIRATA: " + player.getName());
-                return false;
             }
+            
+            return result;
         } catch (Exception e) {
             plugin.getLogger().warning("Erro na verificação online-mode: " + e.getMessage());
             // Em caso de erro, considera como pirata
             plugin.getLogger().info("❌ Erro na verificação - considerando como PIRATA: " + player.getName());
-            return false;
+            return new OnlineModeSimulator.OnlineModeResult(false, null, "Erro na verificação: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Método de compatibilidade - mantido para não quebrar código existente
+     */
+    public boolean isOriginalPlayer(Player player) {
+        OnlineModeSimulator.OnlineModeResult result = verifyOriginalPlayer(player);
+        return result.isSuccess();
     }
     
     /**

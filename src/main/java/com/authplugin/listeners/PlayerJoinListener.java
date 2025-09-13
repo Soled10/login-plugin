@@ -36,19 +36,26 @@ public class PlayerJoinListener implements Listener {
         
         // Verifica se é conta original de forma assíncrona
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            boolean isOriginal = authUtils.isOriginalPlayer(player);
+            OnlineModeSimulator.OnlineModeResult result = authUtils.verifyOriginalPlayer(player);
             
             // Executa na thread principal
             plugin.getServer().getScheduler().runTask(plugin, () -> {
-                if (isOriginal) {
+                if (result.isSuccess()) {
                     // Conta original (premium) - autentica automaticamente
                     plugin.setPlayerAuthenticated(player.getUniqueId(), true);
                     plugin.setPlayerLoggedIn(player.getUniqueId(), true);
                     
-                    // Adiciona o nome à lista de proteção
-                    plugin.getDatabaseManager().addOriginalName(player.getName(), player.getUniqueId());
+                    // Adiciona o nome à lista de proteção com UUID oficial
+                    UUID officialUUID = result.getOfficialUUID();
+                    if (officialUUID != null) {
+                        plugin.getDatabaseManager().addOriginalName(player.getName(), officialUUID);
+                        plugin.getLogger().info("✅ UUID oficial associado ao jogador " + player.getName() + ": " + officialUUID);
+                    } else {
+                        plugin.getDatabaseManager().addOriginalName(player.getName(), player.getUniqueId());
+                    }
                     
                     authUtils.sendSuccessMessage(player, "✅ Conta PREMIUM detectada! Você foi autenticado automaticamente.");
+                    authUtils.sendInfoMessage(player, "🔗 UUID oficial associado: " + (officialUUID != null ? officialUUID : "N/A"));
                     removeRestrictions(player);
                 } else {
                     // Conta pirata (offline) - verifica se pode usar este nick
