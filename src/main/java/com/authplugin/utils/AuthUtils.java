@@ -67,51 +67,30 @@ public class AuthUtils {
     
     /**
      * Verifica se um jogador é de conta original
+     * Método: Verifica se o UUID é de modo online (premium) vs offline (pirata)
      */
     public boolean isOriginalPlayer(Player player) {
-        plugin.getLogger().info("Iniciando verificação de conta original para: " + player.getName() + " (" + player.getUniqueId() + ")");
+        plugin.getLogger().info("Verificando conta original para: " + player.getName() + " (" + player.getUniqueId() + ")");
         
-        // Verifica se o servidor está em online-mode
-        boolean isOnlineMode = plugin.getServer().getOnlineMode();
-        plugin.getLogger().info("Servidor em online-mode: " + isOnlineMode);
+        // Verifica se o UUID é de modo online (premium) ou offline (pirata)
+        boolean isOnlineUUID = isOnlineModeUUID(player.getUniqueId());
         
-        // Se estiver em online-mode, todos os jogadores são originais
-        if (isOnlineMode) {
-            plugin.getLogger().info("Servidor em online-mode - conta considerada original: " + player.getName());
+        if (isOnlineUUID) {
+            plugin.getLogger().info("✅ Conta ORIGINAL detectada (UUID online): " + player.getName());
             return true;
-        }
-        
-        // Verifica se mojangAPI está inicializado
-        if (mojangAPI == null) {
-            plugin.getLogger().warning("MojangAPI não está inicializado! Considerando conta como pirata.");
+        } else {
+            plugin.getLogger().info("❌ Conta PIRATA detectada (UUID offline): " + player.getName());
             return false;
         }
-        
-        // Primeiro tenta verificar pelo nome
-        boolean isOriginalByName = mojangAPI.isOriginalAccount(player.getName());
-        
-        if (isOriginalByName) {
-            plugin.getLogger().info("Conta original detectada pelo nome: " + player.getName());
-            return true;
-        }
-        
-        // Se não funcionou pelo nome, tenta pelo UUID
-        boolean isOriginalByUUID = mojangAPI.isOriginalUUID(player.getUniqueId());
-        
-        if (isOriginalByUUID) {
-            plugin.getLogger().info("Conta original detectada pelo UUID: " + player.getUniqueId());
-            return true;
-        }
-        
-        // Verifica se o UUID parece ser de uma conta original (formato offline vs online)
-        boolean isOfflineUUID = isOfflineModeUUID(player.getUniqueId());
-        if (isOfflineUUID) {
-            plugin.getLogger().info("UUID parece ser de modo offline - conta considerada pirata: " + player.getName());
-            return false;
-        }
-        
-        plugin.getLogger().info("Conta não é original: " + player.getName() + " (" + player.getUniqueId() + ")");
-        return false;
+    }
+    
+    /**
+     * Verifica se um UUID é de modo online (premium)
+     */
+    private boolean isOnlineModeUUID(UUID uuid) {
+        // UUIDs de modo online (premium) têm versão 4
+        // UUIDs de modo offline (pirata) têm versão 3
+        return uuid.version() == 4; // UUID v4 indica modo online (premium)
     }
     
     /**

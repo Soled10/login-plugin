@@ -34,30 +34,33 @@ public class PlayerJoinListener implements Listener {
         // Aplica efeitos de restrição até a autenticação
         applyRestrictions(player);
         
-        // Verifica se é conta original
+        // Verifica se é conta original (UUID online vs offline)
         boolean isOriginal = authUtils.isOriginalPlayer(player);
         
         if (isOriginal) {
-            // Autentica automaticamente contas originais
+            // Conta original (premium) - autentica automaticamente
             plugin.setPlayerAuthenticated(player.getUniqueId(), true);
             plugin.setPlayerLoggedIn(player.getUniqueId(), true);
             
             // Adiciona o nome à lista de proteção
             plugin.getDatabaseManager().addOriginalName(player.getName(), player.getUniqueId());
             
-            authUtils.sendSuccessMessage(player, "Conta original detectada! Você foi autenticado automaticamente.");
+            authUtils.sendSuccessMessage(player, "✅ Conta PREMIUM detectada! Você foi autenticado automaticamente.");
             removeRestrictions(player);
         } else {
+            // Conta pirata (offline) - verifica se pode usar este nick
+            if (checkOriginalNameProtection(player)) {
+                // Nick pertence a conta original - não permite
+                return;
+            }
+            
             // Verifica se é conta pirata registrada
             if (authUtils.isPlayerRegistered(player.getUniqueId())) {
-                authUtils.sendInfoMessage(player, "Bem-vindo de volta! Use /login <senha> para fazer login.");
+                authUtils.sendInfoMessage(player, "🔓 Bem-vindo de volta! Use /login <senha> para fazer login.");
             } else {
-                authUtils.sendInfoMessage(player, "Bem-vindo! Use /register <senha> <confirmar_senha> para se registrar.");
+                authUtils.sendInfoMessage(player, "🔓 Bem-vindo! Use /register <senha> <confirmar_senha> para se registrar.");
             }
         }
-        
-        // Verifica proteção contra uso de nicks de contas originais
-        checkOriginalNameProtection(player);
     }
     
     private void applyRestrictions(Player player) {
@@ -89,7 +92,7 @@ public class PlayerJoinListener implements Listener {
         player.setGameMode(GameMode.SURVIVAL);
     }
     
-    private void checkOriginalNameProtection(Player player) {
+    private boolean checkOriginalNameProtection(Player player) {
         String playerName = player.getName();
         
         // Verifica se o nome está na lista de contas originais protegidas
@@ -98,10 +101,10 @@ public class PlayerJoinListener implements Listener {
             
             // Se o UUID não coincidir com o da conta original, kicka o jogador
             if (originalUUID != null && !originalUUID.equals(player.getUniqueId())) {
-                player.kickPlayer("§cEste nome pertence a uma conta original!\n" +
+                player.kickPlayer("§c❌ Este nick pertence a uma conta PREMIUM!\n" +
                                 "§eVocê não pode usar este nome.\n" +
-                                "§aUse outro nome para jogar no servidor.");
-                return;
+                                "§a🔓 Use outro nickname para jogar no servidor.");
+                return true; // Jogador foi kickado
             }
         }
         
@@ -109,11 +112,13 @@ public class PlayerJoinListener implements Listener {
         if (authUtils.isNameUsedByOriginal(playerName)) {
             // Se não for a conta original, kicka o jogador
             if (!authUtils.isOriginalPlayer(player)) {
-                player.kickPlayer("§cEste nome pertence a uma conta original!\n" +
+                player.kickPlayer("§c❌ Este nick pertence a uma conta PREMIUM!\n" +
                                 "§eVocê não pode usar este nome.\n" +
-                                "§aUse outro nome para jogar no servidor.");
-                return;
+                                "§a🔓 Use outro nickname para jogar no servidor.");
+                return true; // Jogador foi kickado
             }
         }
+        
+        return false; // Jogador pode continuar
     }
 }
