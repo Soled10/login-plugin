@@ -11,7 +11,7 @@ Um plugin completo de autenticação para servidores Minecraft que suporta tanto
 - **Verificação via API Mojang**: Validação real-time de contas premium
 - **Sistema de sessões**: Mantém jogadores logados por um tempo configurável
 - **Mudança de senha**: Comando `/changepassword` para alterar senhas
-- **Banco de dados SQLite**: Armazenamento seguro com criptografia BCrypt
+- **Banco de dados YAML**: Armazenamento em arquivos YAML legíveis com criptografia BCrypt
 
 ### 🔒 Segurança
 - **Verificação de UUID**: Confirma se o UUID corresponde à conta premium
@@ -153,14 +153,14 @@ security:
 ### Otimizações Implementadas
 - **Cache de API**: Reduz chamadas repetitivas à API Mojang
 - **Consultas assíncronas**: Não bloqueia thread principal
-- **Índices de banco**: Consultas SQL otimizadas
+- **Arquivos YAML**: Dados legíveis e editáveis manualmente
 - **Limpeza automática**: Remove sessões expiradas periodicamente
 
 ### Recursos Utilizados
-- **RAM**: ~5-10MB base + cache de jogadores
+- **RAM**: ~2-5MB base + cache de jogadores
 - **CPU**: Mínimo (apenas durante autenticação)
 - **Rede**: Consultas esporádicas à API Mojang
-- **Disco**: Banco SQLite (~1MB por 1000 jogadores)
+- **Disco**: Arquivos YAML (~100KB por 1000 jogadores)
 
 ## 🤝 Suporte
 
@@ -181,9 +181,9 @@ Este plugin é fornecido como está, para uso em servidores Minecraft. Sinta-se 
 ## 🔗 Dependências
 
 - **Spigot/Paper API**: 1.8+
-- **SQLite JDBC**: 3.42.0.0
 - **BCrypt**: 0.4 (para hash de senhas)
 - **JSON**: 20230618 (para API Mojang)
+- **Bukkit YAML**: Incluído no Spigot (para arquivos de dados)
 
 ---
 

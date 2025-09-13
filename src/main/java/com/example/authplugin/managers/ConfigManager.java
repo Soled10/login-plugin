@@ -51,7 +51,7 @@ public class ConfigManager {
     
     // Configurações do banco de dados
     public String getDatabasePath() {
-        return config.getString("database.path", "plugins/AuthPlugin/database.db");
+        return config.getString("database.path", "plugins/AuthPlugin/");
     }
     
     // Mensagens

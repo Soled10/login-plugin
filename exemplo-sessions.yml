@@ -1,0 +1,24 @@
+# Arquivo de sessões ativas - AuthPlugin
+# Estrutura:
+# jogador:
+#   uuid: uuid_do_jogador
+#   ip-address: endereco_ip
+#   login-time: timestamp
+#   expires-at: timestamp
+
+# Exemplo de sessão ativa de jogador premium
+notch:
+  uuid: 069a79f4-44e9-4726-a5be-fca90e38aaf5
+  ip-address: 192.168.1.100
+  login-time: 1694647200000
+  expires-at: 1694647500000
+
+# Exemplo de sessão ativa de jogador pirata
+steve_pirata:
+  uuid: null
+  ip-address: 192.168.1.101
+  login-time: 1694647100000
+  expires-at: 1694647400000
+
+# As sessões são automaticamente removidas quando expiram
+# O tempo de expiração é configurável no config.yml (session-timeout)

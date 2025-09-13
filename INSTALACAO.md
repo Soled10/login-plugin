@@ -4,7 +4,7 @@
 
 O plugin **AuthPlugin** foi compilado e está pronto para uso. O arquivo JAR final está localizado em:
 ```
-target/AuthPlugin-1.0.0.jar (13.1 MB)
+target/AuthPlugin-1.0.0.jar (130 KB)
 ```
 
 ## 📋 Pré-requisitos
@@ -32,7 +32,8 @@ Reinicie o servidor Minecraft para carregar o plugin.
 ### 4. Configurar o Plugin (Opcional)
 O plugin criará automaticamente:
 - `plugins/AuthPlugin/config.yml` - Configurações principais
-- `plugins/AuthPlugin/database.db` - Banco de dados SQLite
+- `plugins/AuthPlugin/players.yml` - Dados dos jogadores
+- `plugins/AuthPlugin/sessions.yml` - Sessões ativas
 
 ## ⚡ Teste Rápido
 
@@ -101,8 +102,8 @@ spawn:
 ### ❌ "API Mojang indisponível"
 **Solução**: Plugin funciona offline, mas não verifica contas premium
 
-### ❌ "Erro de banco de dados"
-**Solução**: Verifique permissões da pasta `plugins/AuthPlugin/`
+### ❌ "Erro nos arquivos YAML"
+**Solução**: Verifique permissões da pasta `plugins/AuthPlugin/` e se os arquivos não estão corrompidos
 
 ### ❌ "Plugin não carrega"
 **Solução**: Verifique se está usando Java 8+ e Spigot/Paper 1.8+
@@ -118,7 +119,7 @@ O plugin impede que jogadores piratas usem nicks de contas premium:
 ### ⚡ Performance Otimizada
 - Cache inteligente para reduzir chamadas à API Mojang
 - Consultas assíncronas que não travam o servidor
-- Banco SQLite otimizado com índices
+- Arquivos YAML leves e editáveis manualmente
 - Limpeza automática de sessões expiradas
 
 ### 🌍 Compatibilidade
@@ -129,11 +130,11 @@ O plugin impede que jogadores piratas usem nicks de contas premium:
 
 ## 📊 Estatísticas do Plugin
 
-- **Tamanho**: 13.1 MB (inclui todas as dependências)
+- **Tamanho**: 130 KB (muito leve!)
 - **Dependências incluídas**:
-  - SQLite JDBC 3.42.0.0
   - BCrypt 0.4
   - JSON 20230618
+  - Bukkit YAML (nativo do Spigot)
 - **Linguagem**: Java 8 (compatível com versões superiores)
 - **Licença**: Uso livre para servidores Minecraft
 

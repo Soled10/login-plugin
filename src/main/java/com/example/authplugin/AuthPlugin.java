@@ -1,7 +1,7 @@
 package com.example.authplugin;
 
 import com.example.authplugin.commands.*;
-import com.example.authplugin.database.DatabaseManager;
+import com.example.authplugin.database.YamlDatabase;
 import com.example.authplugin.listeners.PlayerListener;
 import com.example.authplugin.managers.AuthManager;
 import com.example.authplugin.managers.ConfigManager;
@@ -13,7 +13,7 @@ import java.util.logging.Level;
 public class AuthPlugin extends JavaPlugin {
     
     private static AuthPlugin instance;
-    private DatabaseManager databaseManager;
+    private YamlDatabase yamlDatabase;
     private AuthManager authManager;
     private ConfigManager configManager;
     private MojangAPI mojangAPI;
@@ -25,10 +25,10 @@ public class AuthPlugin extends JavaPlugin {
         // Inicializar configuração
         configManager = new ConfigManager(this);
         
-        // Inicializar banco de dados
-        databaseManager = new DatabaseManager(this);
-        if (!databaseManager.initialize()) {
-            getLogger().log(Level.SEVERE, "Falha ao inicializar banco de dados! Desabilitando plugin...");
+        // Inicializar banco de dados YAML
+        yamlDatabase = new YamlDatabase(this);
+        if (!yamlDatabase.initialize()) {
+            getLogger().log(Level.SEVERE, "Falha ao inicializar banco de dados YAML! Desabilitando plugin...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -47,12 +47,13 @@ public class AuthPlugin extends JavaPlugin {
         
         getLogger().info("AuthPlugin habilitado com sucesso!");
         getLogger().info("Sistema de autenticação ativo para contas premium e piratas.");
+        getLogger().info("Banco de dados: Arquivos YAML");
     }
     
     @Override
     public void onDisable() {
-        if (databaseManager != null) {
-            databaseManager.close();
+        if (yamlDatabase != null) {
+            yamlDatabase.close();
         }
         getLogger().info("AuthPlugin desabilitado!");
     }
@@ -69,8 +70,8 @@ public class AuthPlugin extends JavaPlugin {
         return instance;
     }
     
-    public DatabaseManager getDatabaseManager() {
-        return databaseManager;
+    public YamlDatabase getYamlDatabase() {
+        return yamlDatabase;
     }
     
     public AuthManager getAuthManager() {

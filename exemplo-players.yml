@@ -1,0 +1,40 @@
+# Arquivo de dados dos jogadores - AuthPlugin
+# Estrutura:
+# jogador:
+#   password: hash_bcrypt_da_senha
+#   uuid: uuid_do_jogador
+#   premium: true/false
+#   last-login: timestamp
+#   registration-date: timestamp
+#   last-ip: endereco_ip
+#   login-attempts: numero_tentativas
+
+# Exemplo de jogador premium (Minecraft original)
+notch:
+  password: $2a$10$N9qo8uLOickgx2ZMRZoMye.IjPeGRnLYjqo.FZhLp1234567890
+  uuid: 069a79f4-44e9-4726-a5be-fca90e38aaf5
+  premium: true
+  last-login: 1694647200000
+  registration-date: 1694640000000
+  last-ip: 192.168.1.100
+  login-attempts: 0
+
+# Exemplo de jogador pirata
+steve_pirata:
+  password: $2a$10$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOP
+  uuid: null
+  premium: false
+  last-login: 1694647100000
+  registration-date: 1694640000000
+  last-ip: 192.168.1.101
+  login-attempts: 0
+
+# Exemplo de jogador premium com algumas tentativas de login
+herobrine:
+  password: $2a$10$zyxwvutsrqponmlkjihgfedcba0987654321ZYXWVUTSRQPONML
+  uuid: f84c6a79-0a4e-45e0-879b-cd49ebd4c4e2
+  premium: true
+  last-login: 1694646800000
+  registration-date: 1694635000000
+  last-ip: 192.168.1.102
+  login-attempts: 1

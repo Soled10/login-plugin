@@ -42,14 +42,14 @@ public class AuthManager {
         loginAttempts.remove(uuid);
         
         // Atualizar último login no banco de dados
-        plugin.getDatabaseManager().updateLastLogin(player.getName(), 
+        plugin.getYamlDatabase().updateLastLogin(player.getName(), 
             player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : "unknown");
         
         // Criar sessão se configurado
         int sessionTimeout = plugin.getConfigManager().getSessionTimeout();
         if (sessionTimeout > 0) {
             long expiresAt = System.currentTimeMillis() + (sessionTimeout * 1000L);
-            plugin.getDatabaseManager().createSession(
+            plugin.getYamlDatabase().createSession(
                 player.getName(), 
                 uuid, 
                 player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : "unknown",
@@ -73,7 +73,7 @@ public class AuthManager {
      * Verifica se um jogador está registrado
      */
     public boolean isRegistered(String username) {
-        return plugin.getDatabaseManager().isPlayerRegistered(username);
+        return plugin.getYamlDatabase().isPlayerRegistered(username);
     }
     
     /**
@@ -95,7 +95,7 @@ public class AuthManager {
             }
         }
         
-        boolean success = plugin.getDatabaseManager().registerPlayer(
+        boolean success = plugin.getYamlDatabase().registerPlayer(
             username, password, uuid, premiumInfo.isPremium(), ip);
         
         if (success) {
@@ -112,17 +112,17 @@ public class AuthManager {
     public boolean loginPlayer(Player player, String password) {
         String username = player.getName();
         
-        if (!plugin.getDatabaseManager().verifyPassword(username, password)) {
+        if (!plugin.getYamlDatabase().verifyPassword(username, password)) {
             // Incrementar tentativas de login
             int attempts = loginAttempts.getOrDefault(player.getUniqueId(), 0) + 1;
             loginAttempts.put(player.getUniqueId(), attempts);
-            plugin.getDatabaseManager().incrementLoginAttempts(username);
+            plugin.getYamlDatabase().incrementLoginAttempts(username);
             
             return false;
         }
         
         authenticate(player);
-        plugin.getDatabaseManager().resetLoginAttempts(username);
+        plugin.getYamlDatabase().resetLoginAttempts(username);
         return true;
     }
     
@@ -130,11 +130,11 @@ public class AuthManager {
      * Altera a senha de um jogador
      */
     public boolean changePassword(String username, String oldPassword, String newPassword) {
-        if (!plugin.getDatabaseManager().verifyPassword(username, oldPassword)) {
+        if (!plugin.getYamlDatabase().verifyPassword(username, oldPassword)) {
             return false;
         }
         
-        return plugin.getDatabaseManager().changePassword(username, newPassword);
+        return plugin.getYamlDatabase().changePassword(username, newPassword);
     }
     
     /**
@@ -146,7 +146,7 @@ public class AuthManager {
         String ip = player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : "unknown";
         
         // Verificar sessão válida primeiro
-        if (plugin.getDatabaseManager().hasValidSession(username, ip)) {
+        if (plugin.getYamlDatabase().hasValidSession(username, ip)) {
             return true;
         }
         
@@ -215,7 +215,7 @@ public class AuthManager {
      * Remove registro de um jogador (comando admin)
      */
     public boolean unregisterPlayer(String username) {
-        boolean success = plugin.getDatabaseManager().unregisterPlayer(username);
+        boolean success = plugin.getYamlDatabase().unregisterPlayer(username);
         if (success) {
             // Remover da lista de jogadores registrados se estiver online
             Player player = Bukkit.getPlayerExact(username);
@@ -248,7 +248,7 @@ public class AuthManager {
                 });
                 
                 // Limpar sessões expiradas
-                plugin.getDatabaseManager().cleanExpiredSessions();
+                plugin.getYamlDatabase().cleanExpiredSessions();
             }
         }.runTaskTimer(plugin, 20L, 20L); // A cada segundo
     }

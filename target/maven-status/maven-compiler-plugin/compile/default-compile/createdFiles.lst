@@ -1,7 +1,6 @@
 com/example/authplugin/listeners/PlayerListener$1.class
 com/example/authplugin/commands/RegisterCommand$1.class
 com/example/authplugin/utils/MojangAPI$PremiumInfo.class
-com/example/authplugin/database/DatabaseManager.class
 com/example/authplugin/listeners/PlayerListener.class
 com/example/authplugin/commands/LoginCommand.class
 com/example/authplugin/commands/UnregisterCommand.class
@@ -15,3 +14,4 @@ com/example/authplugin/managers/AuthManager$2.class
 com/example/authplugin/commands/ChangePasswordCommand.class
 com/example/authplugin/managers/AuthManager.class
 com/example/authplugin/utils/MojangAPI.class
+com/example/authplugin/database/YamlDatabase.class

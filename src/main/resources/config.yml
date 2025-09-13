@@ -23,7 +23,11 @@ security:
 
 # Configurações do banco de dados
 database:
-  path: "plugins/AuthPlugin/database.db"
+  # Pasta onde serão salvos os arquivos YAML
+  path: "plugins/AuthPlugin/"
+  # Os arquivos criados serão:
+  # - players.yml (dados dos jogadores)
+  # - sessions.yml (sessões ativas)
 
 # Configurações de spawn
 spawn:
