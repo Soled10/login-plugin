@@ -1,0 +1,17 @@
+com/example/authplugin/listeners/PlayerListener$1.class
+com/example/authplugin/commands/RegisterCommand$1.class
+com/example/authplugin/utils/MojangAPI$PremiumInfo.class
+com/example/authplugin/database/DatabaseManager.class
+com/example/authplugin/listeners/PlayerListener.class
+com/example/authplugin/commands/LoginCommand.class
+com/example/authplugin/commands/UnregisterCommand.class
+com/example/authplugin/commands/RegisterCommand$1$1.class
+com/example/authplugin/commands/AuthReloadCommand.class
+com/example/authplugin/managers/AuthManager$1.class
+com/example/authplugin/AuthPlugin.class
+com/example/authplugin/managers/ConfigManager.class
+com/example/authplugin/commands/RegisterCommand.class
+com/example/authplugin/managers/AuthManager$2.class
+com/example/authplugin/commands/ChangePasswordCommand.class
+com/example/authplugin/managers/AuthManager.class
+com/example/authplugin/utils/MojangAPI.class

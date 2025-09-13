@@ -1,0 +1,41 @@
+name: AuthPlugin
+version: '1.0.0'
+description: Plugin de autenticação para Minecraft com suporte a contas premium e piratas
+author: YourName
+main: com.example.authplugin.AuthPlugin
+api-version: 1.20
+softdepend: [Vault]
+
+commands:
+  register:
+    description: Registrar uma conta no servidor
+    usage: /register <senha> <confirmar-senha>
+    aliases: [reg]
+  
+  login:
+    description: Fazer login no servidor
+    usage: /login <senha>
+    aliases: [l]
+    
+  changepassword:
+    description: Alterar senha da conta
+    usage: /changepassword <senha-atual> <nova-senha> <confirmar-nova-senha>
+    aliases: [changepass, mudarsena]
+    
+  authreload:
+    description: Recarregar configuração do plugin
+    usage: /authreload
+    permission: authplugin.admin
+    
+  unregister:
+    description: Remover registro de um jogador
+    usage: /unregister <jogador>
+    permission: authplugin.admin
+
+permissions:
+  authplugin.admin:
+    description: Permissão para comandos administrativos
+    default: op
+  authplugin.premium:
+    description: Permissão para bypass de autenticação (contas premium)
+    default: false
