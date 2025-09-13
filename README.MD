@@ -1,0 +1,1 @@
+Plugin criado pelo cursor
