@@ -1,7 +1,12 @@
-# AuthPlugin - Plugin de Autenticação para Minecraft
+# 🔐 AuthPlugin - Plugin de Autenticação para Minecraft
 
-## Descrição
-Plugin completo de autenticação para servidores Minecraft que diferencia entre contas originais e piratas, com sistema de proteção contra uso de nicks de contas originais.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Java](https://img.shields.io/badge/Java-8+-blue.svg)](https://www.oracle.com/java/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.16.5+-green.svg)](https://minecraft.net/)
+[![Maven](https://img.shields.io/badge/Maven-3.6+-red.svg)](https://maven.apache.org/)
+
+## 📋 Descrição
+Plugin completo de autenticação para servidores Minecraft que diferencia entre contas originais e piratas, com sistema de proteção contra uso de nicks de contas originais. Ideal para servidores que querem permitir tanto contas originais quanto piratas, mas com segurança adequada.
 
 ## Funcionalidades
 
