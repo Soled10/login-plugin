@@ -1,0 +1,223 @@
+# Exemplos de configuração para diferentes cenários do AuthPlugin
+
+# ===========================================
+# CONFIGURAÇÃO PADRÃO (Recomendada)
+# ===========================================
+# Para servidores que querem máxima segurança
+# com suporte a premium e piratas
+
+default_config: |
+  security:
+    premium-auto-login: true
+    check-premium-uuid: true
+    block-premium-names: true
+    session-timeout: 300
+    max-login-attempts: 3
+    login-timeout: 60
+
+  database:
+    path: "plugins/AuthPlugin/database.db"
+
+  spawn:
+    teleport-to-spawn: true
+    world: "world"
+    x: 0
+    y: 64
+    z: 0
+    yaw: 0
+    pitch: 0
+
+# ===========================================
+# SERVIDOR APENAS PREMIUM
+# ===========================================
+# Para servidores que só aceitam contas premium
+# Bloqueia todos os piratas
+
+premium_only_config: |
+  security:
+    premium-auto-login: true
+    check-premium-uuid: true
+    block-premium-names: true
+    session-timeout: 0  # Desabilita sessões
+    max-login-attempts: 1
+    login-timeout: 30
+
+  database:
+    path: "plugins/AuthPlugin/database.db"
+
+  spawn:
+    teleport-to-spawn: false
+
+# ===========================================
+# SERVIDOR MISTO PERMISSIVO
+# ===========================================
+# Para servidores que querem permitir tanto premium
+# quanto piratas com menos restrições
+
+permissive_config: |
+  security:
+    premium-auto-login: true
+    check-premium-uuid: false  # Não verifica UUID rigorosamente
+    block-premium-names: false # Permite piratas com nicks premium
+    session-timeout: 600       # 10 minutos
+    max-login-attempts: 5
+    login-timeout: 120         # 2 minutos
+
+  database:
+    path: "plugins/AuthPlugin/database.db"
+
+  spawn:
+    teleport-to-spawn: true
+    world: "world"
+    x: 0
+    y: 100
+    z: 0
+    yaw: 0
+    pitch: 0
+
+# ===========================================
+# SERVIDOR HARDCORE
+# ===========================================
+# Para servidores com máxima segurança
+# Timeouts curtos e verificações rigorosas
+
+hardcore_config: |
+  security:
+    premium-auto-login: true
+    check-premium-uuid: true
+    block-premium-names: true
+    session-timeout: 180       # 3 minutos apenas
+    max-login-attempts: 2      # Apenas 2 tentativas
+    login-timeout: 30          # 30 segundos para logar
+
+  database:
+    path: "plugins/AuthPlugin/database.db"
+
+  spawn:
+    teleport-to-spawn: true
+    world: "lobby"
+    x: 0
+    y: 64
+    z: 0
+    yaw: 0
+    pitch: 0
+
+# ===========================================
+# SERVIDOR DE DESENVOLVIMENTO/TESTE
+# ===========================================
+# Para testes e desenvolvimento
+# Configurações mais relaxadas
+
+development_config: |
+  security:
+    premium-auto-login: false  # Força todos a fazer login
+    check-premium-uuid: false
+    block-premium-names: false
+    session-timeout: 3600      # 1 hora
+    max-login-attempts: 10
+    login-timeout: 300         # 5 minutos
+
+  database:
+    path: "plugins/AuthPlugin/test-database.db"
+
+  spawn:
+    teleport-to-spawn: false
+
+# ===========================================
+# SERVIDOR COM LOBBY SEPARADO
+# ===========================================
+# Para servidores que usam BungeeCord/Velocity
+# com lobby dedicado para autenticação
+
+lobby_config: |
+  security:
+    premium-auto-login: true
+    check-premium-uuid: true
+    block-premium-names: true
+    session-timeout: 0         # Sem sessões (usa BungeeCord)
+    max-login-attempts: 3
+    login-timeout: 60
+
+  database:
+    path: "plugins/AuthPlugin/database.db"
+
+  spawn:
+    teleport-to-spawn: true
+    world: "lobby"
+    x: 0
+    y: 64
+    z: 0
+    yaw: 0
+    pitch: 0
+
+# ===========================================
+# MENSAGENS PERSONALIZADAS (Português BR)
+# ===========================================
+# Exemplo de como personalizar todas as mensagens
+
+custom_messages: |
+  messages:
+    # Registro
+    register-usage: "§e⚠ Use: §f/register <senha> <confirmar-senha>"
+    register-success: "§a✓ Conta criada! Você foi logado automaticamente."
+    register-already: "§c✗ Você já tem uma conta! Use §f/login <senha>"
+    register-password-mismatch: "§c✗ As senhas não são iguais!"
+    register-password-short: "§c✗ Senha muito curta! Mínimo 6 caracteres."
+    register-premium-block: "§c✗ Este nick pertence a uma conta premium!"
+
+    # Login
+    login-usage: "§e⚠ Use: §f/login <senha>"
+    login-success: "§a✓ Login realizado! Bem-vindo de volta!"
+    login-failed: "§c✗ Senha incorreta! Tentativas restantes: §f%attempts%"
+    login-not-registered: "§c✗ Conta não encontrada! Use §f/register <senha> <confirmar>"
+    login-already: "§a✓ Você já está logado!"
+    login-timeout: "§c⏰ Tempo esgotado! Faça login mais rápido da próxima vez."
+    login-max-attempts: "§c🚫 Muitas tentativas incorretas! Tente novamente mais tarde."
+
+    # Mudança de senha
+    changepass-usage: "§e⚠ Use: §f/changepassword <senha-atual> <nova-senha> <confirmar>"
+    changepass-success: "§a✓ Senha alterada com sucesso!"
+    changepass-wrong-old: "§c✗ Senha atual incorreta!"
+    changepass-mismatch: "§c✗ As novas senhas não coincidem!"
+    changepass-short: "§c✗ Nova senha muito curta! Mínimo 6 caracteres."
+    changepass-not-logged: "§c✗ Você precisa estar logado!"
+
+    # Mensagens gerais
+    premium-welcome: "§a🌟 Bem-vindo, §f%player%§a! Conta premium detectada."
+    not-logged: "§c🔒 Você precisa estar autenticado para fazer isso!"
+    need-login: "§e🔑 Faça login com: §f/login <sua-senha>"
+    need-register: "§e📝 Registre-se com: §f/register <senha> <confirmar-senha>"
+    kick-not-authenticated: "§c🚫 Você precisa se registrar ou fazer login!\n§eUse /register ou /login"
+
+    # Admin
+    admin-reload: "§a✓ Plugin recarregado!"
+    admin-unregister-success: "§a✓ Jogador §f%player%§a removido do sistema."
+    admin-unregister-not-found: "§c✗ Jogador §f%player%§c não está registrado."
+    admin-no-permission: "§c🚫 Você não tem permissão para isso!"
+
+# ===========================================
+# CONFIGURAÇÃO PARA SERVIDOR INTERNACIONAL
+# ===========================================
+# Mensagens em inglês para servidor internacional
+
+international_messages: |
+  messages:
+    register-usage: "§cUsage: /register <password> <confirm-password>"
+    register-success: "§aSuccessfully registered! You have been automatically logged in."
+    register-already: "§cYou are already registered! Use /login <password> to login."
+    register-password-mismatch: "§cPasswords do not match!"
+    register-password-short: "§cPassword must be at least 6 characters long!"
+    register-premium-block: "§cThis username belongs to a premium account! Use a different nickname."
+
+    login-usage: "§cUsage: /login <password>"
+    login-success: "§aSuccessfully logged in!"
+    login-failed: "§cIncorrect password! Attempts remaining: %attempts%"
+    login-not-registered: "§cYou are not registered! Use /register <password> <confirm-password>"
+    login-already: "§cYou are already logged in!"
+    login-timeout: "§cLogin timeout exceeded! You have been disconnected."
+    login-max-attempts: "§cToo many incorrect login attempts! You have been disconnected."
+
+    premium-welcome: "§aWelcome, %player%! Premium account detected, automatic login performed."
+    not-logged: "§cYou need to be logged in to use this command!"
+    need-login: "§eYou need to login! Use /login <password>"
+    need-register: "§eYou need to register! Use /register <password> <confirm-password>"

@@ -1,0 +1,81 @@
+# Configuração do AuthPlugin
+# Plugin de autenticação para Minecraft com suporte a contas premium e piratas
+
+# Configurações de segurança
+security:
+  # Auto login para contas premium (Minecraft original)
+  premium-auto-login: true
+  
+  # Verificar UUID da conta premium via API Mojang
+  check-premium-uuid: true
+  
+  # Bloquear piratas de usar nicks de contas premium
+  block-premium-names: true
+  
+  # Tempo limite da sessão em segundos (0 = desabilitado)
+  session-timeout: 300
+  
+  # Máximo de tentativas de login antes de kick
+  max-login-attempts: 3
+  
+  # Tempo limite para fazer login após entrar (segundos)
+  login-timeout: 60
+
+# Configurações do banco de dados
+database:
+  # Pasta onde serão salvos os arquivos YAML
+  path: "plugins/AuthPlugin/"
+  # Os arquivos criados serão:
+  # - players.yml (dados dos jogadores)
+  # - sessions.yml (sessões ativas)
+
+# Configurações de spawn
+spawn:
+  # Teleportar para spawn ao entrar
+  teleport-to-spawn: true
+  world: "world"
+  x: 0
+  y: 64
+  z: 0
+  yaw: 0
+  pitch: 0
+
+# Mensagens do plugin
+messages:
+  # Mensagens de registro
+  register-usage: "§cUso: /register <senha> <confirmar-senha>"
+  register-success: "§aRegistro realizado com sucesso! Você foi automaticamente logado."
+  register-already: "§cVocê já está registrado! Use /login <senha> para entrar."
+  register-password-mismatch: "§cAs senhas não coincidem!"
+  register-password-short: "§cA senha deve ter pelo menos 6 caracteres!"
+  register-premium-block: "§cEste nome de usuário pertence a uma conta premium! Use outro nick."
+  
+  # Mensagens de login
+  login-usage: "§cUso: /login <senha>"
+  login-success: "§aLogin realizado com sucesso!"
+  login-failed: "§cSenha incorreta! Tentativas restantes: %attempts%"
+  login-not-registered: "§cVocê não está registrado! Use /register <senha> <confirmar-senha>"
+  login-already: "§cVocê já está logado!"
+  login-timeout: "§cTempo limite para login excedido! Você foi desconectado."
+  login-max-attempts: "§cMuitas tentativas de login incorretas! Você foi desconectado."
+  
+  # Mensagens de mudança de senha
+  changepass-usage: "§cUso: /changepassword <senha-atual> <nova-senha> <confirmar-nova-senha>"
+  changepass-success: "§aSenha alterada com sucesso!"
+  changepass-wrong-old: "§cSenha atual incorreta!"
+  changepass-mismatch: "§cAs novas senhas não coincidem!"
+  changepass-short: "§cA nova senha deve ter pelo menos 6 caracteres!"
+  changepass-not-logged: "§cVocê precisa estar logado para alterar a senha!"
+  
+  # Mensagens gerais
+  premium-welcome: "§aBem-vindo, %player%! Conta premium detectada, login automático realizado."
+  not-logged: "§cVocê precisa estar logado para usar este comando!"
+  need-login: "§eVocê precisa fazer login! Use /login <senha>"
+  need-register: "§eVocê precisa se registrar! Use /register <senha> <confirmar-senha>"
+  kick-not-authenticated: "Você precisa se registrar ou fazer login para jogar!"
+  
+  # Mensagens administrativas
+  admin-reload: "§aConfiguração recarregada com sucesso!"
+  admin-unregister-success: "§aJogador %player% foi removido do banco de dados!"
+  admin-unregister-not-found: "§cJogador %player% não está registrado!"
+  admin-no-permission: "§cVocê não tem permissão para usar este comando!"

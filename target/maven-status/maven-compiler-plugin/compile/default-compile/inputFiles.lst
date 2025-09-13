@@ -1,0 +1,11 @@
+/workspace/src/main/java/com/example/authplugin/managers/AuthManager.java
+/workspace/src/main/java/com/example/authplugin/database/YamlDatabase.java
+/workspace/src/main/java/com/example/authplugin/commands/AuthReloadCommand.java
+/workspace/src/main/java/com/example/authplugin/commands/LoginCommand.java
+/workspace/src/main/java/com/example/authplugin/commands/RegisterCommand.java
+/workspace/src/main/java/com/example/authplugin/listeners/PlayerListener.java
+/workspace/src/main/java/com/example/authplugin/commands/UnregisterCommand.java
+/workspace/src/main/java/com/example/authplugin/managers/ConfigManager.java
+/workspace/src/main/java/com/example/authplugin/utils/MojangAPI.java
+/workspace/src/main/java/com/example/authplugin/commands/ChangePasswordCommand.java
+/workspace/src/main/java/com/example/authplugin/AuthPlugin.java
