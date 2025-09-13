@@ -25,6 +25,10 @@ if %errorlevel% equ 0 (
     echo.
     echo ✅ Compilação concluída com sucesso!
     echo.
+    echo Testando o JAR...
+    call test-jar.bat
+    
+    echo.
     echo Arquivo JAR criado em: target/AuthPlugin-1.0.0.jar
     echo.
     echo Para instalar no servidor:
