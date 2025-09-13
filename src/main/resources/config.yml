@@ -1,0 +1,65 @@
+# Configuração do MinecraftAuth
+# Sistema de autenticação para servidores com online-mode=false
+
+# Configurações do banco de dados
+database:
+  path: "plugins/MinecraftAuth/users.db"
+
+# Configurações de segurança
+security:
+  # Duração da sessão em minutos (padrão: 60)
+  session_duration_minutes: 60
+  
+  # Comprimento mínimo da senha (padrão: 6)
+  min_password_length: 6
+  
+  # Máximo de tentativas de login antes de bloquear a conta (padrão: 5)
+  max_login_attempts: 5
+  
+  # Duração do bloqueio em minutos (padrão: 30)
+  lock_duration_minutes: 30
+
+# Configurações de mensagens
+messages:
+  # Mensagem de boas-vindas para contas originais
+  original_welcome: "§a[MinecraftAuth] §eConta original detectada! Login automático realizado."
+  
+  # Mensagem de boas-vindas para contas piratas
+  pirate_welcome: "§e[MinecraftAuth] Bem-vindo! Use /login ou /register para continuar."
+  
+  # Mensagem de erro para tentativa de usar nick de conta original
+  original_nick_error: "§c[MinecraftAuth] Este nome pertence a uma conta original! Use seu próprio nome."
+
+# Configurações de proteção
+protection:
+  # Bloquear comandos para jogadores não autenticados
+  block_commands: true
+  
+  # Bloquear movimento para jogadores não autenticados
+  block_movement: true
+  
+  # Bloquear chat para jogadores não autenticados
+  block_chat: true
+  
+  # Bloquear interações para jogadores não autenticados
+  block_interactions: true
+  
+  # Bloquear quebra/colocação de blocos para jogadores não autenticados
+  block_block_actions: true
+  
+  # Bloquear drop/coleta de itens para jogadores não autenticados
+  block_item_actions: true
+  
+  # Bloquear abertura de inventários para jogadores não autenticados
+  block_inventory: true
+
+# Configurações de debug
+debug:
+  # Habilitar logs detalhados
+  verbose_logging: false
+  
+  # Log de tentativas de login
+  log_login_attempts: true
+  
+  # Log de registros
+  log_registrations: true

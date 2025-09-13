@@ -1,0 +1,39 @@
+name: MinecraftAuth
+version: '${version}'
+main: com.minecraftauth.MinecraftAuth
+api-version: 1.20
+author: MinecraftAuth
+description: Sistema de autenticação para Minecraft com proteção contra contas piratas
+website: https://github.com/minecraftauth
+
+commands:
+  login:
+    description: Faça login na sua conta
+    usage: /login <senha>
+    permission: minecraftauth.login
+  register:
+    description: Registre uma nova conta
+    usage: /register <senha> <confirmar_senha>
+    permission: minecraftauth.register
+  changepassword:
+    description: Altere sua senha
+    usage: /changepassword <senha_atual> <nova_senha> <confirmar_nova_senha>
+    permission: minecraftauth.changepassword
+  auth:
+    description: Comandos de administração do sistema de autenticação
+    usage: /auth <reload|stats>
+    permission: minecraftauth.admin
+
+permissions:
+  minecraftauth.login:
+    description: Permite fazer login
+    default: true
+  minecraftauth.register:
+    description: Permite se registrar
+    default: true
+  minecraftauth.changepassword:
+    description: Permite alterar senha
+    default: true
+  minecraftauth.admin:
+    description: Permite usar comandos de administração
+    default: op
