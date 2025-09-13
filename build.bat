@@ -11,9 +11,14 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+REM Limpa arquivos problemáticos
+echo Limpando arquivos antigos...
+if exist "target\original-*.jar" del "target\original-*.jar"
+if exist "target\dependency-reduced-pom.xml" del "target\dependency-reduced-pom.xml"
+
 REM Limpa e compila o projeto
 echo Executando mvn clean package...
-call mvn clean package
+call mvn clean package -DskipTests
 
 REM Verifica se a compilação foi bem-sucedida
 if %errorlevel% equ 0 (

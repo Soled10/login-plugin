@@ -73,6 +73,8 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <finalName>AuthPlugin-${project.version}</finalName>
                             <relocations>
                                 <relocation>
                                     <pattern>com.google.gson</pattern>
