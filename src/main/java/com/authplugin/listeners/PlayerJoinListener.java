@@ -34,35 +34,30 @@ public class PlayerJoinListener implements Listener {
         // Aplica efeitos de restrição até a autenticação
         applyRestrictions(player);
         
-        // Verifica se é conta original de forma assíncrona para não travar o servidor
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            boolean isOriginal = authUtils.isOriginalPlayer(player);
+        // Verifica se é conta original
+        boolean isOriginal = authUtils.isOriginalPlayer(player);
+        
+        if (isOriginal) {
+            // Autentica automaticamente contas originais
+            plugin.setPlayerAuthenticated(player.getUniqueId(), true);
+            plugin.setPlayerLoggedIn(player.getUniqueId(), true);
             
-            // Executa na thread principal
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                if (isOriginal) {
-                    // Autentica automaticamente contas originais
-                    plugin.setPlayerAuthenticated(player.getUniqueId(), true);
-                    plugin.setPlayerLoggedIn(player.getUniqueId(), true);
-                    
-                    // Adiciona o nome à lista de proteção
-                    plugin.getDatabaseManager().addOriginalName(player.getName(), player.getUniqueId());
-                    
-                    authUtils.sendSuccessMessage(player, "Conta original detectada! Você foi autenticado automaticamente.");
-                    removeRestrictions(player);
-                } else {
-                    // Verifica se é conta pirata registrada
-                    if (authUtils.isPlayerRegistered(player.getUniqueId())) {
-                        authUtils.sendInfoMessage(player, "Bem-vindo de volta! Use /login <senha> para fazer login.");
-                    } else {
-                        authUtils.sendInfoMessage(player, "Bem-vindo! Use /register <senha> <confirmar_senha> para se registrar.");
-                    }
-                }
-                
-                // Verifica proteção contra uso de nicks de contas originais
-                checkOriginalNameProtection(player);
-            });
-        });
+            // Adiciona o nome à lista de proteção
+            plugin.getDatabaseManager().addOriginalName(player.getName(), player.getUniqueId());
+            
+            authUtils.sendSuccessMessage(player, "Conta original detectada! Você foi autenticado automaticamente.");
+            removeRestrictions(player);
+        } else {
+            // Verifica se é conta pirata registrada
+            if (authUtils.isPlayerRegistered(player.getUniqueId())) {
+                authUtils.sendInfoMessage(player, "Bem-vindo de volta! Use /login <senha> para fazer login.");
+            } else {
+                authUtils.sendInfoMessage(player, "Bem-vindo! Use /register <senha> <confirmar_senha> para se registrar.");
+            }
+        }
+        
+        // Verifica proteção contra uso de nicks de contas originais
+        checkOriginalNameProtection(player);
     }
     
     private void applyRestrictions(Player player) {

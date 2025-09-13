@@ -81,6 +81,12 @@ public class AuthUtils {
             return true;
         }
         
+        // Verifica se mojangAPI está inicializado
+        if (mojangAPI == null) {
+            plugin.getLogger().warning("MojangAPI não está inicializado! Considerando conta como pirata.");
+            return false;
+        }
+        
         // Primeiro tenta verificar pelo nome
         boolean isOriginalByName = mojangAPI.isOriginalAccount(player.getName());
         

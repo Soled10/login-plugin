@@ -42,8 +42,8 @@ public class AuthPlugin extends JavaPlugin {
         
         // Inicializa componentes
         databaseManager = new DatabaseManager(this);
-        authUtils = new AuthUtils(this);
         mojangAPI = new MojangAPI();
+        authUtils = new AuthUtils(this);
         
         // Inicializa banco de dados
         databaseManager.initialize();
