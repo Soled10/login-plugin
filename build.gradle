@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group = 'com.authplugin'
+version = '1.0.0'
+description = 'Plugin de autenticação para Minecraft com proteção contra contas piratas'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'spigot-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+    implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
+    implementation 'com.google.code.gson:gson:2.10.1'
+}
+
+shadowJar {
+    relocate 'com.google.gson', 'com.authplugin.libs.gson'
+    relocate 'org.sqlite', 'com.authplugin.libs.sqlite'
+    
+    archiveBaseName = 'AuthPlugin'
+    archiveClassifier = ''
+    archiveVersion = version
+}
+
+build {
+    dependsOn shadowJar
+}
+
+jar {
+    enabled = false
+    dependsOn shadowJar
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
