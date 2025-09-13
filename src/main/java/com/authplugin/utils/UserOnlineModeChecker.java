@@ -21,14 +21,14 @@ public class UserOnlineModeChecker {
     
     /**
      * Simula verificação de online-mode=true para um usuário específico
-     * Verifica se a conta existe na API da Mojang e se o UUID coincide
+     * Verifica se a conta existe na API da Mojang (se existir = premium)
      */
     public CompletableFuture<Boolean> verifyUserOnlineMode(String playerName, UUID playerUUID) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 plugin.getLogger().info("🔍 Simulando online-mode=true para usuário: " + playerName);
                 
-                // Passo 1: Verifica se a conta existe na API Mojang
+                // Verifica se a conta existe na API Mojang
                 String apiUUID = getPlayerUUIDFromAPI(playerName);
                 
                 if (apiUUID == null) {
@@ -36,20 +36,14 @@ public class UserOnlineModeChecker {
                     return false;
                 }
                 
-                // Passo 2: Converte UUID da API para o formato correto
-                UUID apiUUIDFormatted = UUID.fromString(apiUUID);
+                // Se a conta existe na API Mojang, é premium
+                // Em online-mode=true, esta conta seria aceita
+                plugin.getLogger().info("✅ Conta '" + playerName + "' existe na API Mojang - PREMIUM");
+                plugin.getLogger().info("API UUID: " + apiUUID);
+                plugin.getLogger().info("Player UUID: " + playerUUID);
+                plugin.getLogger().info("Nota: UUIDs diferentes são normais com online-mode=false");
                 
-                // Passo 3: Verifica se o UUID da API coincide com o UUID do jogador
-                // Em online-mode=true, o UUID seria o mesmo da API
-                if (apiUUIDFormatted.equals(playerUUID)) {
-                    plugin.getLogger().info("✅ Conta '" + playerName + "' passou na verificação online-mode - PREMIUM");
-                    return true;
-                } else {
-                    plugin.getLogger().info("❌ UUID da API não coincide com UUID do jogador - FALHA no online-mode");
-                    plugin.getLogger().info("API UUID: " + apiUUIDFormatted);
-                    plugin.getLogger().info("Player UUID: " + playerUUID);
-                    return false;
-                }
+                return true;
                 
             } catch (Exception e) {
                 plugin.getLogger().warning("Erro na verificação online-mode para " + playerName + ": " + e.getMessage());
