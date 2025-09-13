@@ -63,11 +63,12 @@ public class OnlineModeSimulator {
             URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + playerName);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
             connection.setRequestProperty("User-Agent", "AuthPlugin/1.0.0");
             
             int responseCode = connection.getResponseCode();
+            plugin.getLogger().info("Resposta da API Mojang: " + responseCode + " para " + playerName);
             
             if (responseCode == 200) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -80,17 +81,78 @@ public class OnlineModeSimulator {
                 reader.close();
                 
                 String jsonResponse = response.toString();
+                plugin.getLogger().info("Resposta JSON: " + jsonResponse);
+                
                 if (!jsonResponse.trim().isEmpty()) {
                     return extractUUIDFromJSON(jsonResponse);
                 }
             } else if (responseCode == 204) {
                 // 204 No Content significa que a conta não existe
+                plugin.getLogger().info("Conta não encontrada (204): " + playerName);
+                return null;
+            } else if (responseCode == 503) {
+                // 503 Service Unavailable - tenta novamente
+                plugin.getLogger().warning("API Mojang indisponível (503) para " + playerName + " - tentando novamente...");
+                return retryAPIRequest(playerName, 1);
+            } else {
+                plugin.getLogger().warning("Resposta inesperada da API Mojang: " + responseCode + " para " + playerName);
                 return null;
             }
             
             return null;
         } catch (Exception e) {
             plugin.getLogger().warning("Erro ao obter UUID da API Mojang: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    /**
+     * Tenta novamente a requisição da API em caso de erro 503
+     */
+    private String retryAPIRequest(String playerName, int attempt) {
+        if (attempt > 3) {
+            plugin.getLogger().warning("Máximo de tentativas atingido para " + playerName);
+            return null;
+        }
+        
+        try {
+            plugin.getLogger().info("Tentativa " + attempt + " para " + playerName);
+            Thread.sleep(2000 * attempt); // Espera progressiva
+            
+            URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + playerName);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
+            connection.setRequestProperty("User-Agent", "AuthPlugin/1.0.0");
+            
+            int responseCode = connection.getResponseCode();
+            plugin.getLogger().info("Tentativa " + attempt + " - Resposta: " + responseCode);
+            
+            if (responseCode == 200) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+                
+                String jsonResponse = response.toString();
+                plugin.getLogger().info("Tentativa " + attempt + " - JSON: " + jsonResponse);
+                
+                if (!jsonResponse.trim().isEmpty()) {
+                    return extractUUIDFromJSON(jsonResponse);
+                }
+            } else if (responseCode == 503) {
+                // Ainda indisponível, tenta novamente
+                return retryAPIRequest(playerName, attempt + 1);
+            }
+            
+            return null;
+        } catch (Exception e) {
+            plugin.getLogger().warning("Erro na tentativa " + attempt + " para " + playerName + ": " + e.getMessage());
             return null;
         }
     }
