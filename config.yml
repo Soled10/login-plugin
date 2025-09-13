@@ -1,0 +1,115 @@
+# Configuração do AuthPlugin
+# Plugin de autenticação para Minecraft com proteção contra contas piratas
+
+# Configurações gerais
+general:
+  # Mensagens do plugin
+  messages:
+    # Mensagens de sucesso
+    success:
+      account_registered: "&aConta registrada com sucesso!"
+      login_successful: "&aLogin realizado com sucesso!"
+      password_changed: "&aSenha alterada com sucesso!"
+      original_account_detected: "&aConta original detectada! Você foi autenticado automaticamente."
+      auto_authenticated: "&aVocê foi autenticado automaticamente."
+    
+    # Mensagens de erro
+    error:
+      already_authenticated: "&cVocê já está autenticado!"
+      not_authenticated: "&cVocê precisa estar autenticated para usar este comando!"
+      original_account_no_register: "&cContas originais não precisam se registrar!"
+      original_account_no_password: "&cContas originais não podem alterar senha através deste comando!"
+      password_too_short: "&cA senha deve ter pelo menos 6 caracteres!"
+      password_too_long: "&cA senha deve ter no máximo 32 caracteres!"
+      passwords_dont_match: "&cAs senhas não coincidem!"
+      name_belongs_to_original: "&cEste nome pertence a uma conta original! Use outro nome."
+      name_already_registered: "&cEste nome já está registrado! Use /login para fazer login."
+      not_registered: "&cVocê não está registrado! Use /register para se registrar."
+      wrong_password: "&cSenha incorreta!"
+      current_password_wrong: "&cSenha atual incorreta ou erro ao alterar senha!"
+      register_error: "&cErro ao registrar conta! Tente novamente."
+      need_authentication: "&cVocê precisa estar autenticado para usar este comando!"
+      need_authentication_chat: "&cVocê precisa estar autenticado para falar no chat!"
+      need_authentication_interact: "&cVocê precisa estar autenticado para interagir com objetos!"
+      need_authentication_break: "&cVocê precisa estar autenticado para quebrar blocos!"
+      need_authentication_place: "&cVocê precisa estar autenticado para colocar blocos!"
+      new_password_different: "&cA nova senha deve ser diferente da senha atual!"
+    
+    # Mensagens de informação
+    info:
+      welcome_back: "&eBem-vindo de volta! Use /login <senha> para fazer login."
+      welcome_new: "&eBem-vindo! Use /register <senha> <confirmar_senha> para se registrar."
+      use_login_or_register: "&eUse /login <senha> ou /register <senha> <confirmar_senha> para se autenticar."
+      help_header: "&e=== Comandos de Autenticação ==="
+      help_register: "&e/auth register <senha> <confirmar_senha> - Registra uma nova conta"
+      help_login: "&e/auth login <senha> - Faz login na sua conta"
+      help_changepassword: "&e/auth changepassword <senha_atual> <nova_senha> - Altera sua senha"
+      help_help: "&e/auth help - Mostra esta mensagem de ajuda"
+      help_alternatives: "&e=== Comandos Alternativos ==="
+      help_register_alt: "&e/register <senha> <confirmar_senha>"
+      help_login_alt: "&e/login <senha>"
+      help_changepassword_alt: "&e/changepassword <senha_atual> <nova_senha>"
+
+# Configurações de segurança
+security:
+  # Verificação de contas originais
+  check_original_accounts: true
+  
+  # Proteção de nicks de contas originais
+  protect_original_names: true
+  
+  # Timeout para verificação de API (em milissegundos)
+  api_timeout: 5000
+  
+  # Intervalo entre verificações de API (em milissegundos)
+  api_check_interval: 300000  # 5 minutos
+
+# Configurações de banco de dados
+database:
+  # Tipo de banco de dados (apenas SQLite suportado atualmente)
+  type: "sqlite"
+  
+  # Nome do arquivo do banco de dados
+  filename: "auth.db"
+  
+  # Configurações de conexão
+  connection:
+    # Timeout de conexão (em segundos)
+    timeout: 30
+    
+    # Pool de conexões
+    pool_size: 10
+
+# Configurações de restrições para jogadores não autenticados
+restrictions:
+  # Aplicar restrições de movimento
+  movement: true
+  
+  # Aplicar restrições de chat
+  chat: true
+  
+  # Aplicar restrições de comandos
+  commands: true
+  
+  # Aplicar restrições de interação
+  interaction: true
+  
+  # Aplicar restrições de dano
+  damage: true
+  
+  # Aplicar efeitos visuais (lentidão, cegueira)
+  visual_effects: true
+
+# Configurações de logging
+logging:
+  # Nível de log (DEBUG, INFO, WARN, ERROR)
+  level: "INFO"
+  
+  # Log de tentativas de login
+  log_login_attempts: true
+  
+  # Log de registros de conta
+  log_registrations: true
+  
+  # Log de mudanças de senha
+  log_password_changes: true

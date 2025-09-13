@@ -1,0 +1,42 @@
+name: AuthPlugin
+version: 1.0.0
+main: com.authplugin.AuthPlugin
+api-version: 1.16
+author: AuthPlugin
+description: Plugin de autenticação para Minecraft com proteção contra contas piratas
+website: https://github.com/authplugin
+
+commands:
+  register:
+    description: Registra uma nova conta
+    usage: /register <senha> <confirmar_senha>
+    permission: auth.register
+  login:
+    description: Faz login na conta
+    usage: /login <senha>
+    permission: auth.login
+  changepassword:
+    description: Altera a senha da conta
+    usage: /changepassword <senha_atual> <nova_senha>
+    permission: auth.changepassword
+  auth:
+    description: Comando principal de autenticação
+    usage: /auth <register|login|changepassword>
+    permission: auth.use
+
+permissions:
+  auth.*:
+    description: Todas as permissões do plugin
+    default: true
+  auth.register:
+    description: Permite registrar uma conta
+    default: true
+  auth.login:
+    description: Permite fazer login
+    default: true
+  auth.changepassword:
+    description: Permite alterar senha
+    default: true
+  auth.use:
+    description: Permite usar comandos de autenticação
+    default: true
