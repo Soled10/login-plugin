@@ -39,8 +39,28 @@ public class OnlineModeSimulator {
                 // Passo 2: Converte UUID da API para o formato correto
                 UUID officialUUID = UUID.fromString(apiUUID);
                 
-                // Passo 3: Simula online-mode=true para este usuário específico
-                // Se a conta existe na API Mojang, é considerada premium
+                // Passo 3: Verifica se o nome já está registrado como conta original
+                if (plugin.getDatabaseManager().isOriginalNameProtected(playerName)) {
+                    UUID storedUUID = plugin.getDatabaseManager().getOriginalNameUUID(playerName);
+                    
+                    // Se o UUID não coincidir com o da conta original, é uma conta pirata
+                    if (storedUUID != null && !storedUUID.equals(currentUUID)) {
+                        plugin.getLogger().info("❌ Nome '" + playerName + "' já está registrado como conta original - BLOQUEANDO");
+                        plugin.getLogger().info("UUID atual (pirata): " + currentUUID);
+                        plugin.getLogger().info("UUID oficial (registrado): " + storedUUID);
+                        plugin.getLogger().info("Conta pirata tentando usar nome de conta original!");
+                        return new OnlineModeResult(false, null, "Nome já registrado como conta original");
+                    }
+                    
+                    // Se o UUID coincidir, é a conta original retornando
+                    plugin.getLogger().info("✅ Conta original retornando: " + playerName);
+                    plugin.getLogger().info("UUID atual: " + currentUUID);
+                    plugin.getLogger().info("UUID oficial: " + officialUUID);
+                    return new OnlineModeResult(true, officialUUID, "Conta original retornando");
+                }
+                
+                // Passo 4: Se chegou até aqui, é a primeira vez que este nome de conta original está sendo usado
+                plugin.getLogger().info("✅ Primeira vez usando conta original: " + playerName);
                 plugin.getLogger().info("✅ Simulando online-mode=true para usuário: " + playerName);
                 plugin.getLogger().info("✅ Conta existe na API Mojang - USUÁRIO É PREMIUM");
                 plugin.getLogger().info("UUID atual (offline): " + currentUUID);
