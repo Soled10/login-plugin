@@ -2,6 +2,7 @@ package com.authplugin.listeners;
 
 import com.authplugin.AuthPlugin;
 import com.authplugin.utils.AuthUtils;
+import com.authplugin.utils.OnlineModeSimulator;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
