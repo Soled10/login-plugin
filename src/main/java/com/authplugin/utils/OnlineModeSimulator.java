@@ -20,7 +20,7 @@ public class OnlineModeSimulator {
     }
     
     /**
-     * Simula online-mode=true para um jogador específico
+     * Simula online-mode=true para um jogador específico usando múltiplos métodos de verificação
      * Se passar, associa o UUID oficial da API Mojang ao jogador
      */
     public CompletableFuture<OnlineModeResult> simulateOnlineMode(String playerName, UUID currentUUID) {
@@ -70,12 +70,6 @@ public class OnlineModeSimulator {
                 plugin.getLogger().info("UUID oficial (API): " + officialUUID);
                 plugin.getLogger().info("Associando UUID oficial ao jogador: " + playerName);
                 
-                // Passo 4: Se chegou até aqui, é uma conta original válida
-                plugin.getLogger().info("✅ Conta '" + playerName + "' passou na verificação online-mode");
-                plugin.getLogger().info("UUID atual: " + currentUUID);
-                plugin.getLogger().info("UUID oficial: " + officialUUID);
-                plugin.getLogger().info("Associando UUID oficial ao jogador: " + playerName);
-                
                 return new OnlineModeResult(true, officialUUID, "Conta premium verificada com sucesso");
                 
             } catch (Exception e) {
@@ -83,6 +77,83 @@ public class OnlineModeSimulator {
                 return new OnlineModeResult(false, null, "Erro na verificação: " + e.getMessage());
             }
         });
+    }
+    
+    /**
+     * Verificação avançada usando múltiplos métodos
+     */
+    public CompletableFuture<OnlineModeResult> advancedVerification(Player player) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                String playerName = player.getName();
+                UUID currentUUID = player.getUniqueId();
+                
+                plugin.getLogger().info("🔍 Verificação avançada para: " + playerName);
+                
+                // Método 1: Verificação básica da API Mojang
+                String apiUUID = getPlayerUUIDFromAPI(playerName);
+                if (apiUUID == null) {
+                    plugin.getLogger().info("❌ Conta não existe na API Mojang");
+                    return new OnlineModeResult(false, null, "Conta não existe na API Mojang");
+                }
+                
+                UUID officialUUID = UUID.fromString(apiUUID);
+                
+                // Método 2: Verificação de conta original
+                AccountVerification accountVerification = new AccountVerification(plugin);
+                AccountVerification.VerificationResult accountResult = accountVerification.verifyAccount(player).get();
+                
+                // Método 3: Detecção de conta pirata
+                PirateAccountDetector pirateDetector = new PirateAccountDetector(plugin);
+                boolean isPirate = pirateDetector.isPirateAccount(player);
+                
+                // Método 4: Análise de rede
+                NetworkAnalysis networkAnalysis = new NetworkAnalysis(plugin);
+                NetworkAnalysis.NetworkAnalysisResult networkResult = networkAnalysis.analyzeNetwork(player).get();
+                
+                // Calcula pontuação final
+                int finalScore = calculateFinalScore(accountResult, isPirate, networkResult);
+                
+                plugin.getLogger().info("🎯 Pontuação final: " + finalScore + "/100");
+                
+                if (finalScore >= 70) {
+                    plugin.getLogger().info("✅ CONTA ORIGINAL CONFIRMADA: " + playerName);
+                    return new OnlineModeResult(true, officialUUID, "Conta original verificada com alta confiança");
+                } else {
+                    plugin.getLogger().info("❌ CONTA PIRATA DETECTADA: " + playerName);
+                    return new OnlineModeResult(false, null, "Conta pirata detectada por múltiplos métodos");
+                }
+                
+            } catch (Exception e) {
+                plugin.getLogger().warning("Erro na verificação avançada: " + e.getMessage());
+                return new OnlineModeResult(false, null, "Erro na verificação avançada: " + e.getMessage());
+            }
+        });
+    }
+    
+    /**
+     * Calcula pontuação final baseada em todos os métodos
+     */
+    private int calculateFinalScore(AccountVerification.VerificationResult accountResult, 
+                                  boolean isPirate, NetworkAnalysis.NetworkAnalysisResult networkResult) {
+        int score = 0;
+        
+        // Pontuação da verificação de conta (40%)
+        if (accountResult.isOriginal()) {
+            score += 40;
+        }
+        
+        // Pontuação da detecção de pirata (30%)
+        if (!isPirate) {
+            score += 30;
+        }
+        
+        // Pontuação da análise de rede (30%)
+        if (!networkResult.isSuspicious()) {
+            score += 30;
+        }
+        
+        return score;
     }
     
     
