@@ -53,8 +53,9 @@ public class PlayerJoinListener implements Listener {
                         plugin.getLogger().info("✅ Nome protegido para jogador " + player.getName() + " com UUID oficial: " + officialUUID);
                         plugin.getLogger().info("✅ UUID offline do jogador: " + player.getUniqueId());
                     } else {
+                        // Se não conseguir obter UUID oficial, usa UUID offline como fallback
                         plugin.getDatabaseManager().addOriginalName(player.getName(), player.getUniqueId());
-                        plugin.getLogger().info("✅ Nome protegido para jogador " + player.getName() + " com UUID offline: " + player.getUniqueId());
+                        plugin.getLogger().info("⚠️ UUID oficial não disponível, usando UUID offline: " + player.getUniqueId());
                     }
                     
                     authUtils.sendSuccessMessage(player, "✅ Conta PREMIUM detectada! Você foi autenticado automaticamente.");
