@@ -46,12 +46,15 @@ public class PlayerJoinListener implements Listener {
                     plugin.setPlayerAuthenticated(player.getUniqueId(), true);
                     plugin.setPlayerLoggedIn(player.getUniqueId(), true);
                     
-                    // Adiciona o nome à lista de proteção com UUID offline do jogador
+                    // Adiciona o nome à lista de proteção com UUID oficial da API
                     UUID officialUUID = result.getOfficialUUID();
-                    plugin.getDatabaseManager().addOriginalName(player.getName(), player.getUniqueId());
-                    plugin.getLogger().info("✅ Nome protegido para jogador " + player.getName() + " com UUID offline: " + player.getUniqueId());
                     if (officialUUID != null) {
-                        plugin.getLogger().info("✅ UUID oficial da API: " + officialUUID);
+                        plugin.getDatabaseManager().addOriginalName(player.getName(), officialUUID);
+                        plugin.getLogger().info("✅ Nome protegido para jogador " + player.getName() + " com UUID oficial: " + officialUUID);
+                        plugin.getLogger().info("✅ UUID offline do jogador: " + player.getUniqueId());
+                    } else {
+                        plugin.getDatabaseManager().addOriginalName(player.getName(), player.getUniqueId());
+                        plugin.getLogger().info("✅ Nome protegido para jogador " + player.getName() + " com UUID offline: " + player.getUniqueId());
                     }
                     
                     authUtils.sendSuccessMessage(player, "✅ Conta PREMIUM detectada! Você foi autenticado automaticamente.");
