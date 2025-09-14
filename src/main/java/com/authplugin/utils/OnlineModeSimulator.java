@@ -47,7 +47,7 @@ public class OnlineModeSimulator {
                     if (storedUUID != null && !storedUUID.equals(currentUUID)) {
                         plugin.getLogger().info("❌ Nome '" + playerName + "' já está registrado como conta original - BLOQUEANDO");
                         plugin.getLogger().info("UUID atual (pirata): " + currentUUID);
-                        plugin.getLogger().info("UUID oficial (registrado): " + storedUUID);
+                        plugin.getLogger().info("UUID registrado (original): " + storedUUID);
                         plugin.getLogger().info("Conta pirata tentando usar nome de conta original!");
                         return new OnlineModeResult(false, null, "Nome já registrado como conta original");
                     }
@@ -55,7 +55,8 @@ public class OnlineModeSimulator {
                     // Se o UUID coincidir, é a conta original retornando
                     plugin.getLogger().info("✅ Conta original retornando: " + playerName);
                     plugin.getLogger().info("UUID atual: " + currentUUID);
-                    plugin.getLogger().info("UUID oficial: " + officialUUID);
+                    plugin.getLogger().info("UUID registrado: " + storedUUID);
+                    plugin.getLogger().info("UUID oficial (API): " + officialUUID);
                     return new OnlineModeResult(true, officialUUID, "Conta original retornando");
                 }
                 
