@@ -32,11 +32,6 @@ public class RegisterCommand implements CommandExecutor {
             return true;
         }
         
-        // Verifica se é conta original
-        if (authUtils.isOriginalPlayer(player)) {
-            authUtils.sendErrorMessage(player, "Contas originais não precisam se registrar!");
-            return true;
-        }
         
         // Verifica argumentos
         if (args.length != 2) {
@@ -63,20 +58,14 @@ public class RegisterCommand implements CommandExecutor {
             return true;
         }
         
-        // Verifica se o nome já está sendo usado por uma conta original
-        if (authUtils.isNameUsedByOriginal(player.getName())) {
-            authUtils.sendErrorMessage(player, "Este nome pertence a uma conta original! Use outro nome.");
-            return true;
-        }
-        
         // Verifica se o nome já está registrado
-        if (authUtils.isNameRegistered(player.getName())) {
+        if (plugin.getDatabaseManager().isPlayerRegistered(player.getName())) {
             authUtils.sendErrorMessage(player, "Este nome já está registrado! Use /login para fazer login.");
             return true;
         }
         
         // Registra o jogador
-        if (authUtils.registerPlayer(player.getUniqueId(), player.getName(), password)) {
+        if (authUtils.registerPlayer(player.getName(), password)) {
             authUtils.sendSuccessMessage(player, "Conta registrada com sucesso!");
             authUtils.sendInfoMessage(player, "Você foi autenticado automaticamente.");
             
@@ -84,14 +73,26 @@ public class RegisterCommand implements CommandExecutor {
             plugin.setPlayerAuthenticated(player.getUniqueId(), true);
             plugin.setPlayerLoggedIn(player.getUniqueId(), true);
             
-            // Adiciona o nome à lista de proteção se for conta original
-            if (authUtils.isOriginalPlayer(player)) {
-                plugin.getDatabaseManager().addOriginalName(player.getName(), player.getUniqueId());
-            }
+            // Remove restrições após registro bem-sucedido
+            removePlayerRestrictions(player);
         } else {
             authUtils.sendErrorMessage(player, "Erro ao registrar conta! Tente novamente.");
         }
         
         return true;
+    }
+    
+    private void removePlayerRestrictions(Player player) {
+        // Remove todos os efeitos de poção
+        for (org.bukkit.potion.PotionEffect effect : player.getActivePotionEffects()) {
+            player.removePotionEffect(effect.getType());
+        }
+        
+        // Restaura velocidade normal
+        player.setWalkSpeed(0.2f);
+        player.setFlySpeed(0.1f);
+        
+        // Define modo de jogo para survival
+        player.setGameMode(org.bukkit.GameMode.SURVIVAL);
     }
 }

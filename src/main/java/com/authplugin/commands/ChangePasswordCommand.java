@@ -32,11 +32,6 @@ public class ChangePasswordCommand implements CommandExecutor {
             return true;
         }
         
-        // Verifica se é conta original
-        if (authUtils.isOriginalPlayer(player)) {
-            authUtils.sendErrorMessage(player, "Contas originais não podem alterar senha através deste comando!");
-            return true;
-        }
         
         // Verifica argumentos
         if (args.length != 2) {
@@ -64,7 +59,7 @@ public class ChangePasswordCommand implements CommandExecutor {
         }
         
         // Altera a senha
-        if (authUtils.changePassword(player.getUniqueId(), currentPassword, newPassword)) {
+        if (authUtils.changePassword(player.getName(), currentPassword, newPassword)) {
             authUtils.sendSuccessMessage(player, "Senha alterada com sucesso!");
         } else {
             authUtils.sendErrorMessage(player, "Senha atual incorreta ou erro ao alterar senha!");

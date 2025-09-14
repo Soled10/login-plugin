@@ -14,14 +14,10 @@ public class AuthUtils {
     
     private AuthPlugin plugin;
     private DatabaseManager databaseManager;
-    private MojangAPI mojangAPI;
-    private OnlineModeSimulator onlineModeSimulator;
     
     public AuthUtils(AuthPlugin plugin) {
         this.plugin = plugin;
         this.databaseManager = plugin.getDatabaseManager();
-        this.mojangAPI = plugin.getMojangAPI();
-        this.onlineModeSimulator = new OnlineModeSimulator(plugin);
     }
     
     /**
@@ -67,79 +63,18 @@ public class AuthUtils {
         return hashedInput != null && hashedInput.equals(hashedPassword);
     }
     
-    /**
-     * Verifica se um jogador é de conta original
-     * Método: Simula online-mode=true e associa UUID oficial se passar
-     */
-    public OnlineModeSimulator.OnlineModeResult verifyOriginalPlayer(Player player) {
-        plugin.getLogger().info("🔍 Verificando conta original para: " + player.getName() + " (" + player.getUniqueId() + ")");
-        
-        // Verifica se o servidor está em online-mode
-        boolean isOnlineMode = plugin.getServer().getOnlineMode();
-        
-        if (isOnlineMode) {
-            // Se estiver em online-mode, todos os jogadores são originais
-            plugin.getLogger().info("✅ Servidor em online-mode - conta considerada PREMIUM: " + player.getName());
-            return new OnlineModeSimulator.OnlineModeResult(true, player.getUniqueId(), "Servidor em online-mode");
-        }
-        
-        // Se estiver em offline-mode, simula online-mode=true para este usuário
-        try {
-            OnlineModeSimulator.OnlineModeResult result = onlineModeSimulator.simulateOnlineMode(player.getName(), player.getUniqueId()).get();
-            
-            if (result.isSuccess()) {
-                plugin.getLogger().info("✅ Usuário passou na verificação online-mode - PREMIUM: " + player.getName());
-                plugin.getLogger().info("UUID oficial associado: " + result.getOfficialUUID());
-            } else {
-                plugin.getLogger().info("❌ Usuário falhou na verificação online-mode - PIRATA: " + player.getName());
-            }
-            
-            return result;
-        } catch (Exception e) {
-            plugin.getLogger().warning("Erro na verificação online-mode: " + e.getMessage());
-            // Em caso de erro, considera como pirata
-            plugin.getLogger().info("❌ Erro na verificação - considerando como PIRATA: " + player.getName());
-            return new OnlineModeSimulator.OnlineModeResult(false, null, "Erro na verificação: " + e.getMessage());
-        }
-    }
     
     /**
-     * Método de compatibilidade - mantido para não quebrar código existente
+     * Verifica se um jogador está registrado no banco de dados pelo nome
      */
-    public boolean isOriginalPlayer(Player player) {
-        OnlineModeSimulator.OnlineModeResult result = verifyOriginalPlayer(player);
-        return result.isSuccess();
-    }
-    
-    /**
-     * Verifica se um UUID é de modo online (premium)
-     */
-    private boolean isOnlineModeUUID(UUID uuid) {
-        // UUIDs de modo online (premium) têm versão 4
-        // UUIDs de modo offline (pirata) têm versão 3
-        return uuid.version() == 4; // UUID v4 indica modo online (premium)
-    }
-    
-    /**
-     * Verifica se um UUID é de modo offline (pirata)
-     */
-    private boolean isOfflineModeUUID(UUID uuid) {
-        // UUIDs de modo offline têm um padrão específico
-        // Eles são gerados baseados no nome do jogador
-        return uuid.version() == 3; // UUID v3 indica modo offline
-    }
-    
-    /**
-     * Verifica se um jogador está registrado no banco de dados
-     */
-    public boolean isPlayerRegistered(UUID uuid) {
-        return databaseManager.isPlayerRegistered(uuid);
+    public boolean isPlayerRegistered(String playerName) {
+        return databaseManager.isPlayerRegistered(playerName);
     }
     
     /**
      * Registra um jogador no banco de dados
      */
-    public boolean registerPlayer(UUID uuid, String playerName, String password) {
+    public boolean registerPlayer(String playerName, String password) {
         String salt = generateSalt();
         String hashedPassword = hashPassword(password, salt);
         
@@ -147,7 +82,7 @@ public class AuthUtils {
             return false;
         }
         
-        return databaseManager.registerPlayer(uuid, playerName, hashedPassword, salt);
+        return databaseManager.registerPlayer(playerName, hashedPassword, salt);
     }
     
     /**
@@ -156,25 +91,21 @@ public class AuthUtils {
     public boolean authenticatePlayer(Player player, String password) {
         UUID uuid = player.getUniqueId();
         
-        // Se for conta original, autentica automaticamente
-        if (isOriginalPlayer(player)) {
-            plugin.setPlayerAuthenticated(uuid, true);
-            plugin.setPlayerLoggedIn(uuid, true);
-            return true;
+        // Verifica se o jogador está registrado
+        if (!isPlayerRegistered(player.getName())) {
+            return false;
         }
         
-        // Se for conta pirata, verifica no banco de dados
-        if (isPlayerRegistered(uuid)) {
-            String[] authData = databaseManager.getPlayerAuthData(uuid);
-            if (authData != null) {
-                String hashedPassword = authData[0];
-                String salt = authData[1];
-                
-                if (verifyPassword(password, hashedPassword, salt)) {
-                    plugin.setPlayerAuthenticated(uuid, true);
-                    plugin.setPlayerLoggedIn(uuid, true);
-                    return true;
-                }
+        // Obtém dados de autenticação do banco
+        String[] authData = databaseManager.getPlayerAuthData(player.getName());
+        if (authData != null) {
+            String hashedPassword = authData[0];
+            String salt = authData[1];
+            
+            if (verifyPassword(password, hashedPassword, salt)) {
+                plugin.setPlayerAuthenticated(uuid, true);
+                plugin.setPlayerLoggedIn(uuid, true);
+                return true;
             }
         }
         
@@ -184,12 +115,12 @@ public class AuthUtils {
     /**
      * Altera a senha de um jogador
      */
-    public boolean changePassword(UUID uuid, String currentPassword, String newPassword) {
-        if (!isPlayerRegistered(uuid)) {
+    public boolean changePassword(String playerName, String currentPassword, String newPassword) {
+        if (!isPlayerRegistered(playerName)) {
             return false;
         }
         
-        String[] authData = databaseManager.getPlayerAuthData(uuid);
+        String[] authData = databaseManager.getPlayerAuthData(playerName);
         if (authData == null) {
             return false;
         }
@@ -210,22 +141,9 @@ public class AuthUtils {
             return false;
         }
         
-        return databaseManager.updatePlayerPassword(uuid, newHashedPassword, newSalt);
+        return databaseManager.updatePlayerPassword(playerName, newHashedPassword, newSalt);
     }
     
-    /**
-     * Verifica se um nome de jogador já está sendo usado por uma conta original
-     */
-    public boolean isNameUsedByOriginal(String playerName) {
-        return mojangAPI.isOriginalAccount(playerName);
-    }
-    
-    /**
-     * Verifica se um nome de jogador já está registrado no banco de dados
-     */
-    public boolean isNameRegistered(String playerName) {
-        return databaseManager.isNameRegistered(playerName);
-    }
     
     /**
      * Formata mensagens com cores

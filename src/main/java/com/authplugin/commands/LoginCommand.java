@@ -40,19 +40,8 @@ public class LoginCommand implements CommandExecutor {
         
         String password = args[0];
         
-        // Se for conta original, autentica automaticamente
-        if (authUtils.isOriginalPlayer(player)) {
-            authUtils.sendSuccessMessage(player, "Conta original detectada! Você foi autenticado automaticamente.");
-            plugin.setPlayerAuthenticated(player.getUniqueId(), true);
-            plugin.setPlayerLoggedIn(player.getUniqueId(), true);
-            
-            // Adiciona o nome à lista de proteção
-            plugin.getDatabaseManager().addOriginalName(player.getName(), player.getUniqueId());
-            return true;
-        }
-        
-        // Se for conta pirata, verifica no banco de dados
-        if (!authUtils.isPlayerRegistered(player.getUniqueId())) {
+        // Verifica se o jogador está registrado
+        if (!plugin.getDatabaseManager().isPlayerRegistered(player.getName())) {
             authUtils.sendErrorMessage(player, "Você não está registrado! Use /register para se registrar.");
             return true;
         }
@@ -60,10 +49,26 @@ public class LoginCommand implements CommandExecutor {
         // Autentica o jogador
         if (authUtils.authenticatePlayer(player, password)) {
             authUtils.sendSuccessMessage(player, "Login realizado com sucesso!");
+            // Remove restrições após login bem-sucedido
+            removePlayerRestrictions(player);
         } else {
             authUtils.sendErrorMessage(player, "Senha incorreta!");
         }
         
         return true;
+    }
+    
+    private void removePlayerRestrictions(Player player) {
+        // Remove todos os efeitos de poção
+        for (org.bukkit.potion.PotionEffect effect : player.getActivePotionEffects()) {
+            player.removePotionEffect(effect.getType());
+        }
+        
+        // Restaura velocidade normal
+        player.setWalkSpeed(0.2f);
+        player.setFlySpeed(0.1f);
+        
+        // Define modo de jogo para survival
+        player.setGameMode(org.bukkit.GameMode.SURVIVAL);
     }
 }

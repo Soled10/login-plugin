@@ -12,7 +12,6 @@ import com.authplugin.listeners.PlayerCommandListener;
 import com.authplugin.listeners.PlayerInteractListener;
 import com.authplugin.listeners.PlayerDamageListener;
 import com.authplugin.utils.AuthUtils;
-import com.authplugin.utils.MojangAPI;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -24,7 +23,6 @@ public class AuthPlugin extends JavaPlugin {
     private static AuthPlugin instance;
     private DatabaseManager databaseManager;
     private AuthUtils authUtils;
-    private MojangAPI mojangAPI;
     
     // Armazena jogadores que estão logados
     private Map<UUID, Boolean> loggedInPlayers;
@@ -42,7 +40,6 @@ public class AuthPlugin extends JavaPlugin {
         
         // Inicializa componentes
         databaseManager = new DatabaseManager(this);
-        mojangAPI = new MojangAPI();
         authUtils = new AuthUtils(this);
         
         // Inicializa banco de dados
@@ -94,9 +91,6 @@ public class AuthPlugin extends JavaPlugin {
         return authUtils;
     }
     
-    public MojangAPI getMojangAPI() {
-        return mojangAPI;
-    }
     
     public Map<UUID, Boolean> getLoggedInPlayers() {
         return loggedInPlayers;
